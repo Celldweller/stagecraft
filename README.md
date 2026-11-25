@@ -27,7 +27,13 @@ A Foundry VTT module for scenes told with pictures: **stages** (mood images as t
 
 ## Installation
 
-In Foundry, go to *Add-on Modules → Install Module* and paste the manifest URL of the latest v13 release, listed in its release notes on the [Releases](https://github.com/Celldweller/stagecraft/releases) page. That URL stays on the v13 version, so Foundry does not offer the v14 version as an update.
+In Foundry, go to *Add-on Modules → Install Module* and paste this manifest URL:
+
+```
+https://raw.githubusercontent.com/Celldweller/stagecraft/v13/module.json
+```
+
+It always points to the latest v13 release, so updates stay on the v13 version.
 
 ## Getting started
 
