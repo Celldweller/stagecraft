@@ -1,0 +1,49 @@
+<div class="stage-scene-config-body">
+  <p class="stage-scene-note">{{localize "STAGECRAFT.StageScene.Hint"}}</p>
+  {{#if current}}
+  <p>
+    {{localize "STAGECRAFT.StageScene.Current"}} <strong>{{current.name}}</strong>
+    {{#if current.active}}({{localize "STAGECRAFT.StageScene.Active"}}){{else}}({{localize "STAGECRAFT.StageScene.Inactive"}}){{/if}}
+  </p>
+  {{else}}
+  <p class="stage-scene-warning">{{localize "STAGECRAFT.StageScene.None"}}</p>
+  {{/if}}
+  <div class="form-group">
+    <label for="stagecraft-stage-scene-select">{{localize "STAGECRAFT.StageScene.Label"}}</label>
+    <div class="form-fields">
+      <select name="stageScene" id="stagecraft-stage-scene-select">
+        <option value="">{{localize "STAGECRAFT.StageScene.NoneOption"}}</option>
+        {{#each scenes}}
+        <option value="{{id}}" {{#if selected}}selected{{/if}}>{{name}}</option>
+        {{/each}}
+      </select>
+    </div>
+  </div>
+  {{#if lockView}}
+  <section class="stage-scene-lockview" aria-labelledby="stagecraft-lockview-heading">
+    <h3 id="stagecraft-lockview-heading">{{localize "STAGECRAFT.LockView.Heading"}}</h3>
+    <p>{{localize "STAGECRAFT.LockView.Active"}}</p>
+    {{#if lockView.conflicts.length}}
+    <p class="stage-scene-warning">{{localize "STAGECRAFT.LockView.ConflictsIntro"}}</p>
+    <ul>
+      {{#each lockView.conflicts}}<li>{{this}}</li>{{/each}}
+    </ul>
+    <div class="stage-scene-actions">
+      <button type="button" data-action="resetLockView">
+        <i class="fa-solid fa-unlock" aria-hidden="true"></i> {{localize "STAGECRAFT.LockView.Reset"}}
+      </button>
+    </div>
+    {{else if current}}
+    <p>{{localize "STAGECRAFT.LockView.NoConflicts"}}</p>
+    {{/if}}
+  </section>
+  {{/if}}
+  <div class="stage-scene-actions">
+    <button type="button" data-action="createScene">
+      <i class="fa-solid fa-plus" aria-hidden="true"></i> {{localize "STAGECRAFT.StageScene.Create"}}
+    </button>
+    <button type="submit">
+      <i class="fa-solid fa-check" aria-hidden="true"></i> {{localize "STAGECRAFT.StageScene.Save"}}
+    </button>
+  </div>
+</div>

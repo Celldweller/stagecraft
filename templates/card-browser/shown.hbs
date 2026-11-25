@@ -1,0 +1,97 @@
+{{!-- Always visible: the cast, the cards shown or hidden, in the order the players see the shown ones (left to
+      right = top to bottom in a column), with gaps between them: a click on a gap sets where the next card goes (the
+      marker stays until moved); a click on a card shows or hides it at its place; a card dragged onto a gap or
+      another card moves there, a tile dragged here joins hidden (CardBrowser#bindStrip). At the end what acts on them:
+      the history "Recently shown", "Save as dialog", "Plan", "Hide all" as an icon and, emphasised, "Remove all". In
+      planning mode the draft instead, with "Discard" and, emphasised in the same place, "Show". Both can be saved as
+      a dialog. --}}
+<section class="card-shown{{#if planning}} planning{{/if}}{{#if stripEmpty}} empty{{/if}}" aria-label="{{stripLabel}}">
+  <span class="card-shown-label">{{stripLabel}}</span>
+  {{#if stripEmpty}}
+  <p class="card-draft-hint">{{localize "STAGECRAFT.CardBrowser.NoneShown"}}</p>
+  {{else}}
+  <ol class="card-shown-list">
+    {{#each shownCards}}
+    <li class="card-shown-gap">
+      <button type="button" data-action="setCardMarker" data-before="{{key}}" aria-pressed="{{marked}}"
+              aria-label="{{gapLabel}}" data-tooltip-text="{{gapLabel}}"></button>
+    </li>
+    {{!-- A list item as the button (a <button> inside a draggable item cannot be dragged in every browser);
+          Enter and Space click it (CardBrowser#bindStrip). --}}
+    <li class="card-shown-card{{#if speaking}} speaking{{/if}}{{#if hidden}} covered{{/if}}" data-key="{{key}}"
+        data-action="toggleCastCard" role="button" tabindex="0" aria-pressed="{{#if hidden}}false{{else}}true{{/if}}"
+        aria-label="{{hint}}" data-tooltip-text="{{hint}}" draggable="true">
+      {{#if thumb}}<img src="{{thumb}}" alt="" width="40" height="60" draggable="false">{{else}}<span>{{name}}</span>{{/if}}
+      {{#if hidden}}<i class="card-shown-covered fa-solid fa-eye-slash" aria-hidden="true"></i>{{/if}}
+    </li>
+    {{/each}}
+    <li class="card-shown-gap">
+      <button type="button" data-action="setCardMarker" data-before="" aria-pressed="{{endMarked}}"
+              aria-label="{{endLabel}}" data-tooltip-text="{{endLabel}}"></button>
+    </li>
+  </ol>
+  {{/if}}
+  {{#if planning}}{{#unless shownCards.length}}
+  <p class="card-draft-hint">{{localize "STAGECRAFT.Draft.Empty"}}</p>
+  {{/unless}}{{/if}}
+  <div class="card-draft-actions">
+    {{!-- History "Recently shown": a small menu (popover right after its button); a click shows an entry again,
+          in planning mode it loads it into the draft. --}}
+    <button type="button" class="icon fa-solid fa-clock-rotate-left card-history-toggle"
+            popovertarget="{{idPrefix}}-history" aria-label="{{historyLabel}}" data-tooltip-text="{{historyHint}}"
+            {{#unless history.length}}disabled{{/unless}}></button>
+    <div class="card-history-menu" id="{{idPrefix}}-history" popover role="group" aria-label="{{historyLabel}}">
+      <p class="card-position-menu-title">{{historyLabel}}</p>
+      {{#each history}}
+      <div class="card-history-entry">
+        <button type="button" class="card-history-restore" data-action="restoreHistory" data-index="{{index}}"
+                data-tooltip-text="{{hint}}">
+          <span class="card-dialog-thumbs" aria-hidden="true">
+            {{#each thumbs}}
+            {{#if src}}<img src="{{src}}" alt="" width="20" height="30"{{#if hidden}} class="covered"{{/if}}>{{else}}<span class="card-dialog-dummy"></span>{{/if}}
+            {{/each}}
+            {{#if more}}<span class="card-dialog-more">+{{more}}</span>{{/if}}
+          </span>
+          <span class="card-history-names">{{names}}</span>
+          <span class="card-history-time">{{time}}</span>
+        </button>
+        <button type="button" class="icon fa-solid fa-floppy-disk" data-action="saveHistoryDialog"
+                data-index="{{index}}" aria-label="{{saveLabel}}" data-tooltip-text="{{saveLabel}}"></button>
+      </div>
+      {{/each}}
+    </div>
+    {{#if planning}}
+    {{#if draftDialog}}
+    <button type="button" data-action="saveDraftDialog" data-tooltip-text="{{draftDialog.hint}}"
+            {{#unless shownCards.length}}disabled{{/unless}}>
+      <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> {{localize "STAGECRAFT.Dialogs.SaveBack"}}
+    </button>
+    {{/if}}
+    <button type="button" data-action="saveAsDialog" {{#unless shownCards.length}}disabled{{/unless}}>
+      <i class="fa-solid fa-comments" aria-hidden="true"></i> {{saveAsLabel}}
+    </button>
+    <button type="button" data-action="discardDraft">
+      <i class="fa-solid fa-xmark" aria-hidden="true"></i> {{localize "STAGECRAFT.Draft.Discard"}}
+    </button>
+    <button type="button" class="card-strip-main show" data-action="showDraft" {{#unless shownCards.length}}disabled{{/unless}}>
+      <i class="fa-solid fa-eye" aria-hidden="true"></i> {{localize "STAGECRAFT.Draft.Show"}}
+    </button>
+    {{else}}
+    {{#unless stripEmpty}}
+    <button type="button" data-action="saveAsDialog">
+      <i class="fa-solid fa-comments" aria-hidden="true"></i> {{saveAsLabel}}
+    </button>
+    {{/unless}}
+    <button type="button" data-action="togglePlanning" data-tooltip="STAGECRAFT.Draft.PlanHint">
+      <i class="fa-solid fa-pen-ruler" aria-hidden="true"></i> {{localize "STAGECRAFT.Draft.Plan"}}
+    </button>
+    <button type="button" class="icon fa-solid fa-eye-slash" data-action="hideAllCards"
+            aria-label="{{localize "STAGECRAFT.CardBrowser.HideAll"}}" data-tooltip="STAGECRAFT.Cast.HideAllHint"
+            {{#unless anyShown}}disabled{{/unless}}></button>
+    <button type="button" class="card-strip-main" data-action="removeAllCards" data-tooltip="STAGECRAFT.Cast.RemoveAllHint"
+            {{#if stripEmpty}}disabled{{/if}}>
+      <i class="fa-solid fa-xmark" aria-hidden="true"></i> {{localize "STAGECRAFT.Cast.RemoveAll"}}
+    </button>
+    {{/if}}
+  </div>
+</section>

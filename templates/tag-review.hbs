@@ -1,0 +1,103 @@
+<div class="tag-review">
+  {{#unless hasIndex}}
+  <p class="tag-review-note">{{localize "STAGECRAFT.TagReview.NoIndex"}}</p>
+  {{else}}
+  <section class="tag-review-section" aria-labelledby="stagecraft-review-suggestions">
+    <h3 id="stagecraft-review-suggestions">{{localize "STAGECRAFT.TagReview.Suggestions" count=suggestions.length}}</h3>
+    <p class="tag-review-note">{{localize "STAGECRAFT.TagReview.SuggestionsHint"}}</p>
+    {{#if suggestions.length}}
+    <ul class="tag-review-list">
+      {{#each suggestions}}
+      <li class="tag-review-suggestion">
+        <div class="tag-review-row">
+          <input type="checkbox" id="stagecraft-review-tag-{{index}}" data-suggestion="{{index}}">
+          <label for="stagecraft-review-tag-{{index}}" class="tag-review-tag" data-kind="{{kind}}">{{tag}}</label>
+          <button type="button" data-action="dismissSuggestion" data-index="{{index}}" aria-label="{{dismissLabel}}">
+            <i class="fa-solid fa-ban" aria-hidden="true"></i> {{localize "STAGECRAFT.TagReview.Dismiss"}}
+          </button>
+        </div>
+        <details class="tag-review-details" data-suggestion="{{index}}" {{#if open}}open{{/if}}>
+          <summary>{{filesLabel}}</summary>
+          <ul class="tag-review-files"></ul>
+        </details>
+      </li>
+      {{/each}}
+    </ul>
+    <div class="tag-review-actions">
+      <button type="button" data-action="pickAll">{{localize "STAGECRAFT.TagReview.PickAll"}}</button>
+      <button type="button" data-action="pickNone">{{localize "STAGECRAFT.TagReview.PickNone"}}</button>
+      <span class="tag-review-chosen" data-role="chosen"></span>
+      <button type="button" data-action="applySuggestions" disabled>
+        <i class="fa-solid fa-check" aria-hidden="true"></i> {{localize "STAGECRAFT.TagReview.ApplySuggestions"}}
+      </button>
+    </div>
+    {{else}}
+    <p>{{localize "STAGECRAFT.TagReview.NoSuggestions"}}</p>
+    {{/if}}
+    {{#if dismissedCount}}
+    <div class="tag-review-actions start">
+      <span class="tag-review-note">{{localize "STAGECRAFT.TagReview.DismissedCount" count=dismissedCount}}</span>
+      <button type="button" data-action="clearDismissed">
+        <i class="fa-solid fa-rotate-left" aria-hidden="true"></i> {{localize "STAGECRAFT.TagReview.ClearDismissed"}}
+      </button>
+    </div>
+    {{/if}}
+  </section>
+
+  <section class="tag-review-section" aria-labelledby="stagecraft-review-orphans">
+    <h3 id="stagecraft-review-orphans">{{localize "STAGECRAFT.TagReview.Orphans" count=orphanCount}}</h3>
+    <p class="tag-review-note">{{localize "STAGECRAFT.TagReview.OrphansHint"}}</p>
+    {{#if incomplete}}
+    <p class="tag-review-warning">{{incomplete}}</p>
+    {{else unless hasOrphans}}
+    <p>{{localize "STAGECRAFT.TagReview.NoOrphans"}}</p>
+    {{/if}}
+
+    {{#if moves.shown.length}}
+    <h4>{{localize "STAGECRAFT.TagReview.Moves" count=moveCount}}</h4>
+    <ul class="tag-review-list">
+      {{#each moves.shown}}
+      <li class="tag-review-row">
+        <input type="checkbox" id="stagecraft-review-move-{{@index}}" data-move="{{from}}" {{#if checked}}checked{{/if}}>
+        <label for="stagecraft-review-move-{{@index}}" class="tag-review-move">
+          <span class="tag-review-path">{{from}}</span>
+          <span class="tag-review-path"><i class="fa-solid fa-arrow-right" aria-hidden="true"></i> {{to}}</span>
+          <span class="tag-review-tags">{{#each tags}}<span class="tag-review-tag" data-kind="{{kind}}">{{tag}}</span>{{/each}}</span>
+        </label>
+      </li>
+      {{/each}}
+    </ul>
+    {{#if moves.more}}<p class="tag-review-note">{{localize "STAGECRAFT.TagReview.MoreMoves" count=moves.more}}</p>{{/if}}
+    <div class="tag-review-actions">
+      <button type="button" data-action="applyMoves">
+        <i class="fa-solid fa-arrow-right-arrow-left" aria-hidden="true"></i> {{localize "STAGECRAFT.TagReview.ApplyMoves"}}
+      </button>
+    </div>
+    {{/if}}
+
+    {{#if lost.shown.length}}
+    <h4>{{localize "STAGECRAFT.TagReview.Lost" count=lostCount}}</h4>
+    <ul class="tag-review-list">
+      {{#each lost.shown}}
+      <li class="tag-review-row">
+        <div class="tag-review-move">
+          <span class="tag-review-path">{{path}}</span>
+          <span class="tag-review-note">{{reason}}</span>
+          <span class="tag-review-tags">{{#each tags}}<span class="tag-review-tag" data-kind="{{kind}}">{{tag}}</span>{{/each}}</span>
+        </div>
+        <button type="button" data-action="removeOrphan" data-path="{{path}}" aria-label="{{removeLabel}}">
+          <i class="fa-solid fa-trash" aria-hidden="true"></i> {{localize "STAGECRAFT.TagReview.Remove"}}
+        </button>
+      </li>
+      {{/each}}
+    </ul>
+    {{#if lost.more}}<p class="tag-review-note">{{localize "STAGECRAFT.TagReview.MoreLost" count=lost.more}}</p>{{/if}}
+    <div class="tag-review-actions">
+      <button type="button" data-action="removeAllOrphans">
+        <i class="fa-solid fa-trash" aria-hidden="true"></i> {{localize "STAGECRAFT.TagReview.RemoveAll" count=lostCount}}
+      </button>
+    </div>
+    {{/if}}
+  </section>
+  {{/unless}}
+</div>

@@ -1,0 +1,85 @@
+<div class="thumb-cache">
+  <dl class="thumb-cache-status">
+    <dt>{{localize "STAGECRAFT.ThumbCache.Location"}}</dt>
+    <dd><code>{{store.source}}: {{store.folder}}</code></dd>
+    {{#if loaded}}
+    <dt>{{localize "STAGECRAFT.ThumbCache.Present"}}</dt>
+    <dd>{{localize "STAGECRAFT.ThumbCache.OfTotal" count=present total=originals}}</dd>
+    <dt>{{localize "STAGECRAFT.ThumbCache.Missing"}}</dt>
+    <dd>{{missing}}</dd>
+    <dt>{{localize "STAGECRAFT.ThumbCache.Failed"}}</dt>
+    <dd>{{failed.length}}</dd>
+    <dt>{{localize "STAGECRAFT.ThumbCache.Orphaned"}}</dt>
+    <dd>{{orphaned.length}}</dd>
+    {{/if}}
+  </dl>
+
+  {{#unless hasIndex}}
+  <p class="thumb-cache-note">{{localize "STAGECRAFT.ThumbCache.NoIndex"}}</p>
+  {{else unless loaded}}
+  <p class="thumb-cache-note" role="status">{{localize "STAGECRAFT.ThumbCache.Reading"}}</p>
+  {{/unless}}
+  {{#if status.unavailable}}
+  <p class="thumb-cache-warning">{{localize "STAGECRAFT.ThumbCache.Unavailable"}}</p>
+  {{/if}}
+
+  {{#if running}}
+  <div class="thumb-cache-progress">
+    <label for="stagecraft-thumb-cache-progress">{{localize "STAGECRAFT.Thumbs.Label"}}</label>
+    <progress id="stagecraft-thumb-cache-progress" max="{{progressMax}}" value="{{progressValue}}"></progress>
+    <span>{{localize "STAGECRAFT.Thumbs.Progress" done=progressValue total=status.total}}</span>
+  </div>
+  {{/if}}
+
+  <div class="thumb-cache-actions">
+    <button type="button" data-action="createMissing" {{#unless canCreate}}disabled{{/unless}}>
+      <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> {{localize "STAGECRAFT.ThumbCache.CreateMissing"}}
+    </button>
+    <button type="button" data-action="regenerate" {{#unless canRegenerate}}disabled{{/unless}}>
+      <i class="fa-solid fa-arrows-rotate" aria-hidden="true"></i> {{localize "STAGECRAFT.ThumbCache.Regenerate"}}
+    </button>
+  </div>
+  <p class="thumb-cache-hint">{{localize "STAGECRAFT.ThumbCache.RegenerateHint"}}</p>
+
+  {{#if orphaned.length}}
+  <details class="thumb-cache-list" data-list="orphaned" {{#if open.orphaned}}open{{/if}}>
+    <summary>{{localize "STAGECRAFT.ThumbCache.ShowOrphaned" count=orphaned.length}}</summary>
+    <p class="thumb-cache-hint">{{localize "STAGECRAFT.ThumbCache.OrphanedHint"}}</p>
+    <textarea readonly rows="6" spellcheck="false" aria-label="{{localize "STAGECRAFT.ThumbCache.Orphaned"}}">{{orphanedText}}</textarea>
+    <div class="thumb-cache-copy">
+      <button type="button" data-action="copyList">
+        <i class="fa-solid fa-copy" aria-hidden="true"></i> {{localize "STAGECRAFT.ThumbCache.Copy"}}
+      </button>
+      <span role="status"></span>
+    </div>
+  </details>
+  {{/if}}
+
+  {{#if oldFolders.length}}
+  <details class="thumb-cache-list" data-list="old" {{#if open.old}}open{{/if}}>
+    <summary>{{localize "STAGECRAFT.ThumbCache.ShowOldFolders" count=oldFolders.length}}</summary>
+    <p class="thumb-cache-hint">{{localize "STAGECRAFT.ThumbCache.OldFoldersHint"}}</p>
+    <textarea readonly rows="3" spellcheck="false" aria-label="{{localize "STAGECRAFT.ThumbCache.OldFolders"}}">{{oldFoldersText}}</textarea>
+    <div class="thumb-cache-copy">
+      <button type="button" data-action="copyList">
+        <i class="fa-solid fa-copy" aria-hidden="true"></i> {{localize "STAGECRAFT.ThumbCache.Copy"}}
+      </button>
+      <span role="status"></span>
+    </div>
+  </details>
+  {{/if}}
+
+  {{#if failed.length}}
+  <details class="thumb-cache-list" data-list="failed" {{#if open.failed}}open{{/if}}>
+    <summary>{{localize "STAGECRAFT.ThumbCache.ShowFailed" count=failed.length}}</summary>
+    <p class="thumb-cache-hint">{{localize "STAGECRAFT.ThumbCache.FailedHint"}}</p>
+    <textarea readonly rows="4" spellcheck="false" aria-label="{{localize "STAGECRAFT.ThumbCache.Failed"}}">{{failedText}}</textarea>
+    <div class="thumb-cache-copy">
+      <button type="button" data-action="copyList">
+        <i class="fa-solid fa-copy" aria-hidden="true"></i> {{localize "STAGECRAFT.ThumbCache.Copy"}}
+      </button>
+      <span role="status"></span>
+    </div>
+  </details>
+  {{/if}}
+</div>

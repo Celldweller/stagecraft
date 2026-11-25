@@ -1,0 +1,34 @@
+{{!-- Name, cards and stage of a saved dialog, or of a new one from the shown cards or the draft. --}}
+<div class="dialog-properties-part">
+  <div class="dialog-properties-field">
+    <label for="{{idPrefix}}-name">{{localize "STAGECRAFT.Dialogs.Name"}} <span aria-hidden="true">*</span></label>
+    <input type="text" id="{{idPrefix}}-name" name="name" value="{{name}}" maxlength="{{maxName}}" required
+           autocomplete="off" enterkeyhint="done" placeholder="{{localize "STAGECRAFT.Dialogs.NamePlaceholder"}}">
+  </div>
+
+  <section class="dialog-properties-cards" aria-labelledby="{{idPrefix}}-cards">
+    <h3 id="{{idPrefix}}-cards">{{localize "STAGECRAFT.Dialogs.Cards"}}</h3>
+    <ol>
+      {{#each cards}}
+      <li class="{{#if speaking}}speaking{{/if}}{{#if missing}} missing{{/if}}{{#if hidden}} covered{{/if}}" data-tooltip-text="{{label}}">
+        {{#if src}}<img src="{{src}}" alt="" width="40" height="60">{{else}}<span class="dialog-properties-dummy" aria-hidden="true"></span>{{/if}}
+        <span class="dialog-properties-card-name">{{label}}</span>
+        {{#if speaking}}<span class="dialog-properties-badge">{{localize "STAGECRAFT.Dialogs.Speaker"}}</span>{{/if}}
+        {{#if hidden}}<span class="dialog-properties-badge"><i class="fa-solid fa-eye-slash" aria-hidden="true"></i> {{localize "STAGECRAFT.Cast.Hidden"}}</span>{{/if}}
+        {{#if missing}}<span class="dialog-properties-badge">{{localize "STAGECRAFT.Dialogs.Missing"}}</span>{{/if}}
+      </li>
+      {{/each}}
+    </ol>
+    <p class="dialog-properties-hint">{{localize "STAGECRAFT.Dialogs.CardsHint"}}</p>
+  </section>
+
+  <fieldset>
+    <legend>{{localize "STAGECRAFT.Dialogs.Stage"}}</legend>
+    {{#each stages}}
+    <label class="dialog-properties-choice">
+      <input type="radio" name="stage" value="{{value}}" {{#if checked}}checked{{/if}}> {{label}}
+    </label>
+    {{/each}}
+    <p class="dialog-properties-hint">{{localize "STAGECRAFT.Dialogs.StageHint"}}</p>
+  </fieldset>
+</div>

@@ -1,0 +1,66 @@
+<div class="tag-editor-body">
+  {{#unless locationCount}}
+  <p class="tag-editor-note">{{localize "STAGECRAFT.Tags.NothingSelected"}}</p>
+  {{/unless}}
+
+  {{#if showVariants}}
+  <fieldset class="tag-editor-variants">
+    <legend>{{localize "STAGECRAFT.Tags.Variants"}}</legend>
+    {{#each variants}}
+    <label>
+      <input type="checkbox" name="variant" value="{{key}}" {{#if checked}}checked{{/if}}>
+      {{label}} <span class="tag-editor-count">({{count}})</span>
+    </label>
+    {{/each}}
+  </fieldset>
+  {{/if}}
+
+  <section class="tag-editor-current" aria-labelledby="stagecraft-tag-editor-current">
+    <h3 id="stagecraft-tag-editor-current">{{localize "STAGECRAFT.Tags.Current"}}</h3>
+    {{#if tags.length}}
+    <ul class="tag-editor-list">
+      {{#each tags}}
+      <li class="tag-editor-tag{{#if partial}} partial{{/if}}{{#if removed}} removed{{/if}}{{#if added}} added{{/if}}"
+          data-kind="{{kind}}">
+        <span class="tag-editor-name">{{tag}}</span>
+        <span class="tag-editor-count">
+          {{#if removed}}{{localize "STAGECRAFT.Tags.WillRemove"}}
+          {{else if isNew}}{{localize "STAGECRAFT.Tags.WillAdd"}}
+          {{else if added}}{{localize "STAGECRAFT.Tags.WillAddAll" total=../total}}
+          {{else}}{{count}}/{{total}}{{/if}}
+        </span>
+        {{#if partial}}{{#unless removed}}
+        <button type="button" class="tag-editor-all" data-action="applyToAll" data-tag="{{tag}}">
+          {{localize "STAGECRAFT.Tags.ApplyToAll"}}
+        </button>
+        {{/unless}}{{/if}}
+        <button type="button" class="icon fa-solid {{#if removed}}fa-rotate-left{{else}}fa-xmark{{/if}}"
+                data-action="toggleRemove" data-tag="{{tag}}"
+                aria-label="{{#if removed}}{{localize "STAGECRAFT.Tags.Undo" tag=tag}}{{else}}{{localize "STAGECRAFT.Tags.Remove" tag=tag}}{{/if}}"
+                data-tooltip-text="{{#if removed}}{{localize "STAGECRAFT.Tags.Undo" tag=tag}}{{else}}{{localize "STAGECRAFT.Tags.Remove" tag=tag}}{{/if}}"></button>
+      </li>
+      {{/each}}
+    </ul>
+    {{else}}
+    <p class="tag-editor-note">{{localize "STAGECRAFT.Tags.None"}}</p>
+    {{/if}}
+  </section>
+
+  <div class="form-group stacked tag-editor-add">
+    <label for="stagecraft-tag-editor-input">{{localize "STAGECRAFT.Tags.Add"}}</label>
+    <div class="form-fields">
+      <input type="text" id="stagecraft-tag-editor-input" name="newTag"
+             autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" enterkeyhint="done"
+             role="combobox" aria-autocomplete="list" aria-expanded="false"
+             aria-controls="stagecraft-tag-editor-suggestions" aria-describedby="stagecraft-tag-editor-hint">
+      <button type="button" data-action="addTag">
+        <i class="fa-solid fa-plus" aria-hidden="true"></i> {{localize "STAGECRAFT.Tags.AddButton"}}
+      </button>
+    </div>
+    <p class="hint" id="stagecraft-tag-editor-hint">{{localize "STAGECRAFT.Tags.AddHint"}}</p>
+    {{!-- Known tags as a listbox in the top layer, placed below the input (above if there is no room); filled by
+          SuggestionList (scripts/apps/suggestion-list.mjs). --}}
+    <ul class="stagecraft-suggestions" id="stagecraft-tag-editor-suggestions" role="listbox" popover="manual"
+        aria-label="{{localize "STAGECRAFT.Tags.Known"}}"></ul>
+  </div>
+</div>

@@ -1,0 +1,2685 @@
+/* Stagecraft styles. All selectors are scoped to .stagecraft to avoid clashes with core and other modules.
+   Spacing, type and colours come from Foundry's own tokens (--spacer-*, --font-size-*, --line-height-*, --color-*),
+   so the module follows core and theme changes. Values Foundry has no token for are named once below. */
+
+/* ---------- Shared ---------- */
+
+/* Prefix colours of Faction and Scene tags. Foundry has only four status colours (--color-level-*), all taken by
+   the other prefixes. As markers they keep at least 3:1 against the dark tile scrim and the light and dark window
+   backgrounds of both themes (Faction 4.8:1 on --color-cool-5, 3.3:1 on --color-light-2; Scene, a blue green
+   between Session and NPC, 4.8:1 and 3.3:1). */
+/* Accent of the module's windows and of the speaking card: selection, pressed switches, focus rings, markers,
+   progress. The text colour of Foundry's buttons (--color-light-3, in the dark theme the value of
+   --button-text-color, which Foundry sets on button elements only, so the token it points to is named here). */
+.stagecraft {
+  --stagecraft-accent: var(--color-light-3);
+  --stagecraft-tag-color-faction: #9b5de5;
+  --stagecraft-tag-color-scene: #128c84;
+}
+
+/* Checkboxes and radio buttons in the module's windows: checked in the accent with a dark mark. Foundry draws them
+   as duotone glyphs, the box in --checkbox-checked-color and the mark in --checkbox-checkmark-color (transparent by
+   default, so the mark would show the light accent's background through and vanish). Foundry sets both on the
+   input itself, so they are set there too. */
+.stagecraft :is(input[type="checkbox"], input[type="radio"]) {
+  --checkbox-checked-color: var(--stagecraft-accent);
+  --checkbox-checkmark-color: var(--color-cool-5);
+}
+
+/* ---------- Stage browser ---------- */
+
+/* Shared by the stage and the card browser (class "media-browser"); class names keep the "stage-" prefix. */
+.stagecraft.media-browser {
+  /* Component tokens */
+  --stage-gap: var(--spacer-8);
+  --stage-gap-tight: var(--spacer-4);
+  /* Height of the floating selection bar: one button row with its padding and border. */
+  --stage-selection-bar-block-size: calc(var(--input-height) + 2 * var(--stage-gap-tight) + 2 * var(--spacer-2));
+  --stage-search-min-inline-size: 18rem;
+  --stage-tile-min-inline-size: 14rem;
+  --stage-tile-gap: var(--spacer-12);
+  --stage-tile-ratio: 16 / 9;
+  --stage-tile-radius: var(--spacer-4);
+  --stage-tile-placeholder: var(--color-cool-5-50);
+  --stage-tile-dummy-size: var(--font-size-32);
+  --stage-tile-dummy-color: var(--color-text-subtle);
+  /* Rough height of an unrendered tile (the image only); `auto` then remembers the real size. */
+  --stage-tile-estimated-block-size: 8rem;
+  --stage-overlay-inset: var(--spacer-4);
+  --stage-overlay-scrim: var(--color-cool-5-75);
+  --stage-overlay-text: var(--color-light-1);
+  /* Tag labels: a coloured marker on the leading edge shows the prefix. */
+  --stage-tag-marker-width: var(--spacer-4);
+  --stage-tag-color-session: var(--color-level-info);
+  --stage-tag-color-scene: var(--stagecraft-tag-color-scene);
+  --stage-tag-color-plot: var(--color-level-warning);
+  --stage-tag-color-npc: var(--color-level-success);
+  --stage-tag-color-location: var(--color-level-error);
+  --stage-tag-color-faction: var(--stagecraft-tag-color-faction);
+  --stage-tag-color-other: var(--color-text-subtle);
+  --stage-tag-color-free: var(--stage-overlay-text);
+  --stage-reveal-duration: 150ms;
+  --stage-focus-ring-width: var(--spacer-2);
+  --stage-focus-ring-color: var(--stagecraft-accent);
+  --stage-progress-color: var(--stagecraft-accent);
+  /* Line height of small labels. Foundry's --line-height-16 exists only for V1 apps (body.game .app). */
+  --stage-line-height-tight: 1rem;
+  --stage-check-size: var(--font-size-20);
+  --stage-tile-name-font-size: var(--font-size-10);
+  --stage-check-box-color: var(--color-light-2);
+  /* Foundry has no 20 % step of its dark tone, so it is mixed from the base token. */
+  --stage-check-ring-color: color-mix(in srgb, var(--color-cool-5) 20%, transparent);
+  /* Hairline for the checkbox ring; the one deliberate pixel value (a rem value would blur between pixels). */
+  --stage-hairline: 1px;
+  /* Foundry draws the checkbox as a Font Awesome glyph. Its square covers 448 of the 512 units of the em box
+     (measured: 17.5px at 20px), so the box around it is shortened by that ratio to make the ring fit. */
+  --stage-check-glyph-ratio: calc(448 / 512);
+  --stage-check-box-size: calc(var(--stage-check-size) * var(--stage-check-glyph-ratio));
+  --stage-check-glyph-opacity: 0.75;
+  --stage-check-checked-backing: white;
+  /* Share of the top overlay with a solid backing before it fades out. */
+  --stage-top-scrim-solid: 60%;
+  --stage-suggestions-max-block-size: 16rem;
+  --stage-popup-shadow: 0 0 var(--spacer-8) var(--color-cool-5-75);
+  --stage-chip-button-size: var(--font-size-24);
+  --stage-selected-ring-width: var(--spacer-4);
+  /* Accent of selection, pressed and pinned states (see --stagecraft-accent). */
+  --stage-selected-color: var(--stagecraft-accent);
+  --stage-selected-text-color: var(--color-cool-5);
+  --stage-notice-color: var(--color-level-info);
+  --stage-notice-color-stage: var(--color-level-warning);
+  /* The location on stage: green, so it differs from the orange of selection and shown variant;
+     the broadcast badge marks it without relying on colour. */
+  --stage-current-color: var(--color-level-success);
+  --stage-current-text-color: var(--color-cool-5);
+  /* Planning mode: the draft (ring of its tiles, frame of its strip). */
+  --stage-draft-color: var(--color-level-info);
+  /* A stage name players see: accent colour plus the players icon. */
+  --stage-name-custom-color: var(--stagecraft-accent);
+  /* Tile button whose image is being switched to (players are still loading it). */
+  --stage-busy-opacity: 0.6;
+
+  .window-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--stage-gap);
+    padding: var(--stage-gap);
+  }
+
+  /* ----- Header ----- */
+
+  .stage-browser-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--stage-gap) var(--spacer-16);
+
+    button {
+      flex: none;
+
+      &:not(.icon) {
+        inline-size: auto;
+      }
+    }
+  }
+
+  /* The browser's own controls after the search: kept together, so a narrow window wraps them as one group. */
+  .stage-browser-tools {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: var(--stage-gap-tight);
+  }
+
+  /* On/off switch for a world setting of the browser (e.g. collapse the sidebar): filled while on, like the
+     chosen card position; the tooltip says on or off as well. */
+  .stage-browser-toggle[aria-pressed="true"] {
+    background: var(--stage-selected-color);
+    border-color: var(--stage-selected-color);
+    color: var(--color-cool-5);
+  }
+
+  .stage-browser-search {
+    display: flex;
+    align-items: center;
+    gap: var(--stage-gap-tight);
+    flex: 1 1 var(--stage-search-min-inline-size);
+  }
+
+  /* ----- Notice after a scan: things to review ----- */
+
+  /* The part always renders its wrapper; without a notice it takes no space (and no gap). */
+  .stage-browser-notice-slot:not(:has(.stage-browser-notice)) {
+    display: none;
+  }
+
+  .stage-browser-notice {
+    display: flex;
+    align-items: center;
+    gap: var(--stage-gap);
+    padding: var(--stage-gap-tight) var(--stage-gap);
+    border: var(--spacer-2) solid var(--stage-notice-color);
+    border-inline-start-width: var(--stage-tag-marker-width);
+    border-radius: var(--stage-tile-radius);
+
+    &[data-kind="stage"] {
+      --stage-notice-color: var(--stage-notice-color-stage);
+    }
+
+    > i {
+      color: var(--stage-notice-color);
+    }
+
+    p {
+      flex: 1;
+      margin: 0;
+    }
+
+    button {
+      flex: none;
+
+      &:not(.icon) {
+        inline-size: auto;
+      }
+    }
+  }
+
+  /* While a switch waits for the players, its button shows progress. */
+  [data-action="selectStage"][aria-busy="true"] {
+    cursor: progress;
+    opacity: var(--stage-busy-opacity);
+  }
+
+  /* ----- Filter bar: input with suggestions, scopes, chips ----- */
+
+  /* The field carries the input's look, so the count sits inside it, after the text, at its natural width. */
+  .stage-filter-field {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    min-inline-size: 0;
+    border: 1px solid var(--input-border-color);
+    border-radius: var(--stage-tile-radius);
+    background: var(--input-background-color);
+    box-shadow: var(--input-box-shadow);
+
+    &:focus-within {
+      outline: var(--spacer-2) solid var(--input-focus-outline-color);
+      outline-offset: calc(-1 * var(--spacer-2));
+    }
+
+    input[type="search"] {
+      flex: 1;
+      min-inline-size: 0;
+      border: none;
+      background: none;
+      box-shadow: none;
+
+      &:focus {
+        outline: none;
+      }
+    }
+
+    .stage-browser-status {
+      flex: none;
+      padding-inline-end: var(--stage-gap);
+      color: var(--color-text-subtle);
+      font-size: var(--font-size-12);
+      white-space: nowrap;
+      pointer-events: none;
+    }
+  }
+
+  /* Listbox under the input; inside the window, so it needs no top layer. */
+  .stage-filter-suggestions {
+    position: absolute;
+    inset-block-start: calc(100% + var(--stage-gap-tight));
+    inset-inline: 0;
+    z-index: 1;
+    max-block-size: var(--stage-suggestions-max-block-size);
+    overflow-y: auto;
+    list-style: none;
+    margin: 0;
+    padding: var(--stage-gap-tight);
+    border: var(--spacer-2) solid var(--color-border);
+    border-radius: var(--stage-tile-radius);
+    background: var(--color-cool-5-90);
+    color: var(--stage-overlay-text);
+    box-shadow: var(--stage-popup-shadow);
+
+    &[hidden] {
+      display: none;
+    }
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: var(--stage-gap);
+      margin: 0;
+      padding: var(--stage-gap-tight) var(--stage-gap);
+      border-radius: var(--stage-tile-radius);
+      cursor: var(--cursor-pointer);
+
+      &:hover,
+      &[aria-selected="true"] {
+        background: var(--stage-overlay-scrim);
+        outline: var(--spacer-2) solid var(--stage-focus-ring-color);
+      }
+    }
+  }
+
+  .stage-filter-suggestion-text {
+    flex: 1;
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .stage-filter-suggestion-count {
+    color: var(--color-text-subtle);
+    font-size: var(--font-size-12);
+  }
+
+  /* Scope checkboxes in a popover, anchored to its button where the browser supports it, centred otherwise. */
+  .stage-filter-scopes {
+    padding: var(--stage-gap);
+    border: var(--spacer-2) solid var(--color-border);
+    border-radius: var(--stage-tile-radius);
+    background: var(--color-cool-5-90);
+    color: var(--stage-overlay-text);
+    box-shadow: var(--stage-popup-shadow);
+
+    fieldset {
+      display: flex;
+      flex-direction: column;
+      gap: var(--stage-gap-tight);
+      margin: 0;
+    }
+
+    label {
+      display: flex;
+      align-items: center;
+      gap: var(--stage-gap-tight);
+    }
+  }
+
+  @supports (position-area: block-end) {
+    .stage-filter-scopes {
+      inset: auto;
+      margin: var(--stage-gap-tight) 0 0;
+      position-area: block-end span-inline-start;
+      position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
+    }
+  }
+
+  .stage-filter-chips {
+    &[hidden] {
+      display: none;
+    }
+
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--stage-gap-tight);
+    }
+  }
+
+  /* Segmented chip: icon and text, then pin and remove as separate fields with a divider each. */
+  .stage-filter-chip {
+    --stage-tag-color: var(--stage-tag-color-other);
+    display: flex;
+    align-items: stretch;
+    margin: 0;
+    padding: 0;
+    padding-inline-start: var(--stage-gap);
+    border: var(--spacer-2) solid var(--color-border);
+    border-inline-start: var(--stage-tag-marker-width) solid var(--stage-tag-color);
+    border-radius: var(--stage-tile-radius);
+    font-size: var(--font-size-13);
+
+    &[data-kind="session"] { --stage-tag-color: var(--stage-tag-color-session); }
+    &[data-kind="scene"] { --stage-tag-color: var(--stage-tag-color-scene); }
+    &[data-kind="plot"] { --stage-tag-color: var(--stage-tag-color-plot); }
+    &[data-kind="npc"] { --stage-tag-color: var(--stage-tag-color-npc); }
+    &[data-kind="faction"] { --stage-tag-color: var(--stage-tag-color-faction); }
+    &[data-kind="location"] { --stage-tag-color: var(--stage-tag-color-location); }
+    &[data-kind="free"] { --stage-tag-color: var(--color-text-primary); }
+    &[data-kind="variant"] { --stage-tag-color: var(--color-text-primary); }
+
+    > i {
+      align-self: center;
+      margin-inline-end: var(--stage-gap-tight);
+    }
+  }
+
+  .stage-filter-chip-text {
+    align-self: center;
+    padding-block: var(--spacer-2);
+    padding-inline-end: var(--stage-gap);
+  }
+
+  /* Chip fields: the pin is filled while pinned and an outline otherwise (shape, not only colour). */
+  .stage-filter-chip-button {
+    flex: none;
+    inline-size: var(--stage-chip-button-size);
+    block-size: auto;
+    min-block-size: 0;
+    padding: 0;
+    border: none;
+    border-inline-start: var(--spacer-2) solid var(--color-border);
+    border-radius: 0;
+    background: none;
+    font-size: var(--font-size-12);
+
+    &:last-child {
+      border-start-end-radius: var(--stage-tile-radius);
+      border-end-end-radius: var(--stage-tile-radius);
+    }
+
+    &:hover {
+      background: var(--stage-tile-placeholder);
+    }
+
+    &[aria-pressed="true"] {
+      color: var(--stage-selected-color);
+    }
+  }
+
+  :is(.stage-browser-status, .stage-browser-warning) {
+    margin: 0;
+  }
+
+  .stage-browser-warning {
+    flex-basis: 100%;
+    font-weight: bold;
+  }
+
+  /* Thumbnail progress: native <progress>, only recoloured (fuller styling would drop the native rendering). */
+  .stage-browser-thumbs {
+    flex-basis: 100%;
+    display: flex;
+    align-items: center;
+    gap: var(--stage-gap);
+    font-size: var(--font-size-12);
+
+    &[hidden] {
+      display: none;
+    }
+
+    progress {
+      flex: 1;
+      accent-color: var(--stage-progress-color);
+    }
+  }
+
+  /* ----- Grid ----- */
+
+  .stage-browser-body {
+    flex: 1;
+    min-block-size: 0;
+    overflow-y: auto;
+  }
+
+  .stage-browser-empty {
+    margin: var(--spacer-16);
+    text-align: center;
+  }
+
+  /* The scroll container clips what lies outside it. The padding leaves room for the rings around a tile
+     (selection inside, on-stage outside), also in the first row and the outer columns. */
+  .stage-browser-grid {
+    list-style: none;
+    margin: 0;
+    padding: calc(2 * var(--stage-selected-ring-width));
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--stage-tile-min-inline-size), 1fr));
+    gap: var(--stage-tile-gap);
+  }
+
+  /* Every tile has the same height: a fixed-ratio image and a single-line name. Variants and (later) tags
+     are overlays on the image, so they never change the tile size. */
+  /* Rings and the focus ring of the image sit on the tile itself, not on the button inside: `content-visibility:
+     auto` (deferred tiles) brings paint containment, which clips everything of the contents outside the tile, but
+     not the tile's own shadow and outline. */
+  .stage-tile {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    border-radius: var(--stage-tile-radius);
+
+    /* The search hides tiles with the hidden attribute; the display rule above would otherwise override it. */
+    &[hidden] {
+      display: none;
+    }
+
+    /* Tiles below the first screenful skip layout and paint until scrolled near. */
+    &.deferred {
+      content-visibility: auto;
+      contain-intrinsic-size: auto none auto var(--stage-tile-estimated-block-size);
+    }
+  }
+
+  .stage-tile-preview {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--stage-gap-tight);
+    block-size: auto;
+    padding: 0;
+    border-radius: var(--stage-tile-radius);
+    overflow: hidden;
+    text-align: start;
+    line-height: var(--stage-line-height-tight);
+  }
+
+  /* The media box keeps the 16:9 frame itself, so a tile waiting for its thumbnail has the final size.
+     Dummy icon and image share one grid cell; the image comes later in the DOM, so once loaded it covers
+     the icon. While it is still loading, an image paints nothing and the icon shows through. */
+  .stage-tile-media {
+    position: relative;
+    display: grid;
+    place-items: center;
+    aspect-ratio: var(--stage-tile-ratio);
+    background: var(--stage-tile-placeholder);
+
+    > :is(.stage-tile-dummy, img) {
+      grid-area: 1 / 1;
+    }
+
+    img {
+      display: block;
+      inline-size: 100%;
+      block-size: 100%;
+      object-fit: cover;
+      border: none;
+    }
+  }
+
+  .stage-tile-dummy {
+    font-size: var(--stage-tile-dummy-size);
+    color: var(--stage-tile-dummy-color);
+  }
+
+  /* Bottom of the image: tag labels on the left, "+n" tag chip and variant badge, on a dark gradient.
+     Overlays sit on a dark scrim, so their text is light in both the light and the dark theme. */
+  .stage-tile-footer {
+    position: absolute;
+    inset-block-end: 0;
+    inset-inline: 0;
+    display: flex;
+    align-items: flex-end;
+    gap: var(--stage-gap-tight);
+    padding: var(--stage-overlay-inset);
+    background: linear-gradient(to top, var(--stage-overlay-scrim), transparent);
+    color: var(--stage-overlay-text);
+    font-size: var(--font-size-12);
+  }
+
+  /* Tag list on the left, variant badge on the right, both at the bottom edge. */
+  .stage-tile-tags {
+    flex: 1;
+    min-inline-size: 0;
+    display: flex;
+    flex-wrap: wrap-reverse;
+    align-items: center;
+    gap: var(--stage-gap-tight);
+  }
+
+  /* Until scripts/apps/tile-tag-fit.mjs has fitted the labels into one line, the list stays invisible, so it never
+     shows as an unsorted stack. */
+  .stage-tile-tags:not([data-fitted]) {
+    visibility: hidden;
+  }
+
+  /* "+n" sits after the labels that fit; the extras follow it in the DOM order of the tags. */
+  .stage-tile-more-chip {
+    order: 1;
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  /* On hover the remaining tags take the place of "+n" in the same line and wrap upwards from there. */
+  .stage-tile-tag-extra {
+    order: 2;
+    display: none;
+  }
+
+  .stage-tile:is(:hover, :focus-within) .stage-tile-tags {
+    .stage-tile-more-chip {
+      display: none;
+    }
+
+    .stage-tile-tag-extra {
+      display: block;
+    }
+  }
+
+  :is(.stage-tile-tag, .stage-tile-chip) {
+    padding: var(--spacer-2) var(--stage-gap-tight);
+    border-radius: var(--stage-tile-radius);
+    background: var(--stage-overlay-scrim);
+    white-space: nowrap;
+  }
+
+  /* Labels shrink with an ellipsis; the full tag is in the tooltip. */
+  .stage-tile-tag {
+    flex: 0 1 auto;
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-inline-start: var(--stage-tag-marker-width) solid var(--stage-tag-color, var(--stage-tag-color-other));
+
+    &[data-kind="session"] { --stage-tag-color: var(--stage-tag-color-session); }
+    &[data-kind="scene"] { --stage-tag-color: var(--stage-tag-color-scene); }
+    &[data-kind="plot"] { --stage-tag-color: var(--stage-tag-color-plot); }
+    &[data-kind="npc"] { --stage-tag-color: var(--stage-tag-color-npc); }
+    &[data-kind="faction"] { --stage-tag-color: var(--stage-tag-color-faction); }
+    &[data-kind="location"] { --stage-tag-color: var(--stage-tag-color-location); }
+    &[data-kind="free"] { --stage-tag-color: var(--stage-tag-color-free); }
+  }
+
+  .stage-tile-chip {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: var(--stage-gap-tight);
+  }
+
+  /* The variant badge always sits at the end, also when there are no tags. */
+  .stage-tile-badge {
+    margin-inline-start: auto;
+  }
+
+  /* Tooltips inside the tile button: Foundry turns pointer events off for button children. */
+  .stage-tile-footer :is(.stage-tile-tag, .stage-tile-chip) {
+    pointer-events: auto;
+  }
+
+  /* Top overlay: checkbox and full name in the first row, variant buttons below. Name and variants appear
+     on hover (opacity only, so they stay reachable with the keyboard); the checkbox also while selected.
+     The overlay itself lets clicks through to the tile button; only checkbox and variant buttons take them. */
+  .stage-tile-top {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline: 0;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: start;
+    gap: var(--stage-gap-tight) var(--stage-gap);
+    padding: var(--stage-overlay-inset) var(--stage-overlay-inset) var(--stage-gap);
+    pointer-events: none;
+    /* Own stacking context, so the backing (z-index -1) stays above the image but below the content. */
+    isolation: isolate;
+
+    /* Dark backing for the hover state, faded in as one layer. */
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      border-radius: var(--stage-tile-radius) var(--stage-tile-radius) 0 0;
+      background: linear-gradient(to bottom, var(--stage-overlay-scrim) var(--stage-top-scrim-solid), transparent);
+      opacity: 0;
+    }
+
+    > :is(.stage-tile-name, .stage-tile-variants) {
+      opacity: 0;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      &::before,
+      > * {
+        transition: opacity var(--stage-reveal-duration) ease-out;
+      }
+    }
+  }
+
+  .stage-tile:is(:hover, :focus-within) .stage-tile-top {
+    &::before {
+      opacity: 1;
+    }
+
+    > :is(.stage-tile-name, .stage-tile-variants) {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+
+  /* The name is a text-like button: a click sets the stage name players see. Foundry's button look is reset. */
+  .stage-tile-name {
+    align-self: center;
+    justify-content: flex-start;
+    gap: var(--stage-gap-tight);
+    min-inline-size: 0;
+    inline-size: auto;
+    block-size: auto;
+    min-block-size: 0;
+    padding: 0;
+    border: none;
+    background: none;
+    color: var(--stage-overlay-text);
+    font-size: var(--stage-tile-name-font-size);
+    line-height: var(--stage-line-height-tight);
+    text-align: start;
+    pointer-events: none;
+
+    &:hover,
+    &:focus-visible {
+      background: none;
+      color: var(--stage-overlay-text);
+      text-decoration: underline;
+    }
+
+    &:focus-visible {
+      outline: var(--stage-focus-ring-width) solid var(--stage-focus-ring-color);
+      box-shadow: none;
+    }
+
+    .stage-tile-name-text {
+      min-inline-size: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .stage-tile-name-icon {
+      display: none;
+    }
+
+    &.custom {
+      &,
+      &:hover,
+      &:focus-visible {
+        color: var(--stage-name-custom-color);
+      }
+
+      .stage-tile-name-icon {
+        display: inline;
+      }
+    }
+  }
+
+  .stage-tile-variants {
+    grid-column: 1 / -1;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--stage-gap-tight);
+    pointer-events: none;
+
+    li {
+      margin: 0;
+    }
+
+    button {
+      inline-size: auto;
+      block-size: auto;
+      padding: var(--spacer-2) var(--stage-gap);
+      font-size: var(--font-size-12);
+      line-height: var(--stage-line-height-tight);
+
+      &.base {
+        font-weight: bold;
+      }
+
+      /* The variant a variant chip made the tile show. */
+      &.shown {
+        outline: var(--spacer-2) solid var(--stage-selected-color);
+      }
+    }
+  }
+
+  :is(.stage-tile:has(> .stage-tile-preview:focus-visible), .stage-tile-variants button:focus-visible) {
+    outline: var(--stage-focus-ring-width) solid var(--stage-focus-ring-color);
+    outline-offset: var(--stage-focus-ring-width);
+  }
+
+  /* The image button's own focus ring is replaced by the tile's (see above). */
+  .stage-tile-preview:focus-visible {
+    outline: none;
+  }
+
+  /* ----- Selection (for tagging) ----- */
+
+  /* Checkbox at the top start of the image: on hover, and always while selected or in selection mode.
+     Hidden with opacity only, so it stays reachable with the keyboard. */
+  .stage-tile-check {
+    /* A light box with a dark ring: readable on the dark backing and on bright images alike. */
+    --checkbox-size: var(--stage-check-size);
+    --checkbox-background-color: var(--stage-check-box-color);
+    position: relative;
+    display: block;
+    inline-size: var(--stage-check-box-size);
+    block-size: var(--stage-check-box-size);
+    margin: 0;
+    border-radius: var(--spacer-4);
+    box-shadow: 0 0 0 var(--stage-hairline) var(--stage-check-ring-color);
+    opacity: 0;
+    pointer-events: auto;
+
+    /* Foundry's glyphs are inline, so their height depends on the input's own font baseline. Placed as
+       blocks instead: each is one em square (the check size) with the glyph centred in it, so shifting it
+       by half the difference on both axes puts the square exactly on the box. */
+    &::before,
+    &::after {
+      position: absolute;
+      display: block;
+      inset-block-start: calc((var(--stage-check-box-size) - var(--stage-check-size)) / 2);
+      inset-inline-start: calc((var(--stage-check-box-size) - var(--stage-check-size)) / 2);
+      inline-size: var(--stage-check-size);
+      block-size: var(--stage-check-size);
+      margin: 0;
+      text-align: center;
+    }
+
+    /* Only this module's tile checkbox: the glyph slightly see-through. */
+    &::before {
+      opacity: var(--stage-check-glyph-opacity);
+    }
+
+    /* Selected: a white backing, so the see-through glyph stays readable on any image. */
+    &:checked {
+      background: var(--stage-check-checked-backing);
+    }
+  }
+
+  .stage-tile:is(:hover, :focus-within, .selected) .stage-tile-check,
+  &.selecting .stage-tile-check {
+    opacity: 1;
+  }
+
+  .stage-tile.selected {
+    box-shadow: 0 0 0 var(--stage-selected-ring-width) var(--stage-selected-color);
+  }
+
+  /* ----- On stage ----- */
+
+  .stage-tile.current {
+    box-shadow: 0 0 0 var(--stage-selected-ring-width) var(--stage-current-color);
+  }
+
+  /* Selected and on stage: the selection ring inside, the stage ring around it. */
+  .stage-tile.current.selected {
+    box-shadow:
+      0 0 0 var(--stage-selected-ring-width) var(--stage-selected-color),
+      0 0 0 calc(2 * var(--stage-selected-ring-width)) var(--stage-current-color);
+  }
+
+  /* Hidden in the cast (card browser): the stage ring, faint. */
+  .stage-tile.cast {
+    --stage-cast-color: color-mix(in srgb, var(--stage-current-color) 40%, transparent);
+
+    box-shadow: 0 0 0 var(--stage-selected-ring-width) var(--stage-cast-color);
+  }
+
+  .stage-tile.cast.selected {
+    box-shadow:
+      0 0 0 var(--stage-selected-ring-width) var(--stage-selected-color),
+      0 0 0 calc(2 * var(--stage-selected-ring-width)) var(--stage-cast-color);
+  }
+
+  /* Marks in the top right corner of the image: light preset, on stage. */
+  .stage-tile-marks {
+    position: absolute;
+    inset-block-start: var(--stage-overlay-inset);
+    inset-inline-end: var(--stage-overlay-inset);
+    display: flex;
+    gap: var(--stage-gap-tight);
+  }
+
+  :is(.stage-tile-live, .stage-tile-lights) {
+    display: none;
+    padding: var(--spacer-2) var(--stage-gap-tight);
+    border-radius: var(--stage-tile-radius);
+    font-size: var(--font-size-12);
+    line-height: var(--stage-line-height-tight);
+    pointer-events: auto;
+  }
+
+  .stage-tile-live {
+    background: var(--stage-current-color);
+    color: var(--stage-current-text-color);
+  }
+
+  .stage-tile-lights {
+    background: var(--stage-overlay-scrim);
+    color: var(--stagecraft-accent);
+  }
+
+  .stage-tile.current .stage-tile-live,
+  .stage-tile.has-lights .stage-tile-lights {
+    display: block;
+  }
+
+  /* Light bulb in front of a variant with a light preset. */
+  .stage-tile-variant-lights {
+    display: none;
+    margin-inline-end: var(--spacer-4);
+  }
+
+  .stage-tile-variants button.has-lights .stage-tile-variant-lights {
+    display: inline;
+  }
+
+  /* "Save preset" while the lights and walls on the stage are not saved: a warm dot. */
+  .stage-browser-header button[data-action="savePreset"].unsaved::after {
+    content: "";
+    inline-size: var(--spacer-8);
+    block-size: var(--spacer-8);
+    border-radius: 50%;
+    background: var(--stagecraft-accent);
+  }
+
+  .stage-tile-variants button[aria-current="true"] {
+    background: var(--stage-current-color);
+    border-color: var(--stage-current-color);
+    color: var(--stage-current-text-color);
+  }
+
+  /* Selection bar: floats over the bottom of the tiles while selecting, so it takes no space when hidden and
+     pushes nothing when it appears. One row; a long count is cut. The tiles get room below them meanwhile, so the
+     last row can be scrolled out from under the bar. */
+  .stage-browser-selection {
+    position: absolute;
+    inset-inline: var(--stage-gap);
+    inset-block-end: var(--stage-gap);
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: var(--stage-gap);
+    padding: var(--stage-gap-tight) var(--stage-gap);
+    border: var(--spacer-2) solid var(--color-border);
+    border-radius: var(--stage-tile-radius);
+    background: var(--color-cool-5-90);
+    box-shadow: var(--stage-popup-shadow);
+
+    &.concealed {
+      display: none;
+    }
+
+    p {
+      flex: 1;
+      min-inline-size: 0;
+      margin: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    button {
+      flex: none;
+      inline-size: auto;
+    }
+  }
+
+  .window-content:has(> .stage-browser-selection:not(.concealed)) .stage-browser-body {
+    padding-block-end: calc(var(--stage-selection-bar-block-size) + var(--stage-gap));
+    scroll-padding-block-end: calc(var(--stage-selection-bar-block-size) + var(--stage-gap));
+  }
+
+  /* Selection-mode button: "Select" while off; filled and "End selection" while on (text, not only colour). */
+  .stage-select-mode > span {
+    display: flex;
+    align-items: center;
+    gap: inherit;
+  }
+
+  &:not(.selecting) .stage-select-mode-end,
+  &.selecting .stage-select-mode-start {
+    display: none;
+  }
+
+  &.selecting .stage-select-mode {
+    background: var(--stage-selected-color);
+    color: var(--stage-selected-text-color);
+  }
+}
+
+/* ---------- Image preview while Shift is held (GM, scripts/apps/image-peek.mjs) ---------- */
+
+/* A popover in the top layer over the whole window: the image as large as fits, its name below. */
+.stagecraft.image-peek {
+  --image-peek-padding: var(--spacer-16);
+  --image-peek-gap: var(--spacer-8);
+  --image-peek-backdrop: var(--color-cool-5-90);
+
+  position: fixed;
+  inset: 0;
+  inline-size: auto;
+  block-size: auto;
+  max-inline-size: none;
+  max-block-size: none;
+  margin: 0;
+  padding: var(--image-peek-padding);
+  border: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--image-peek-gap);
+  background: var(--image-peek-backdrop);
+  color: var(--color-light-1);
+  pointer-events: none;
+
+  /* Closed, the UA rule for popovers hides it; open, it lays out image and caption. */
+  &:popover-open {
+    display: flex;
+  }
+
+  img {
+    min-block-size: 0;
+    max-inline-size: 100%;
+    max-block-size: 100%;
+    object-fit: contain;
+    border: none;
+  }
+
+  figcaption {
+    flex: none;
+    font-size: var(--font-size-16);
+  }
+}
+
+/* ---------- Stage hold (players) ---------- */
+
+/* Driving the masks of the stage transitions (lib/stage-transitions.mjs); registered so they can be animated. */
+@property --stagecraft-hold-progress {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 0%;
+}
+
+@property --stagecraft-hold-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+/* The previous stage image while the next one is drawn (scripts/stage-hold.mjs): right above the canvas (same
+   z-index, later in the DOM), below the cards and the UI; fitted like the locked view, the bar colour behind it.
+   The stage transition animates the layer itself (opacity or a mask). Dip to black: a black layer on top; once
+   black, image and bar colour go, so the layer fading out reveals the new stage. */
+.stagecraft.stage-hold {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-index-canvas);
+  pointer-events: none;
+  background: var(--stage-hold-color, var(--color-cool-5));
+
+  img {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: var(--stage-hold-fit, cover);
+  }
+
+  .stage-hold-black {
+    position: absolute;
+    inset: 0;
+    background: black;
+    opacity: 0;
+  }
+
+  &.black {
+    background: none;
+
+    img {
+      visibility: hidden;
+    }
+  }
+}
+
+/* ---------- Cards shown to the players (scripts/card-layer.mjs) ---------- */
+
+/* Registered so the card size can glide when the number of cards changes (transition "a1…"). */
+@property --stagecraft-card-count {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
+/* Above the canvas and below the UI. Where (data-position, per stage): a row at the top (centred in the upper
+   third), at the bottom (above the hotbar) or in the middle, or a column on the left (right of the scene controls,
+   below the scene navigation) or on the right (left of the sidebar). Rows stand in the free width between the scene
+   controls and the sidebar; the script measures Foundry's UI into --ui-left, --ui-top-left, --ui-right,
+   --ui-bottom, --ui-bottom-left (the player list where it reaches past the scene controls) and --ui-bottom-right
+   (the chat input outside the collapsed sidebar); 0 where an element is hidden.
+   The height is a share of the window height (--card-size, setting), smaller for all alike when the cards would
+   not fit the row or column (cards are about 2:3). Each card is a slot (width and the gap as margins, so it can
+   open from 0) holding the
+   face (the image, which moves and fades). Until its image is decoded a card is invisible; how it then appears and
+   leaves depends on the setting "cardTransition" (attribute data-transition):
+   - a2b1: the card takes its place at once (the others move there smoothly, animated by the script), then fades in
+     with a slight zoom. A leaving card is taken out of the row where it stands and fades there while the others
+     close up at the same time.
+   - a1b1 … a1b4: the slot opens from 0 once the image is ready, the others glide apart and the size glides along;
+     the card fades in with a slight zoom (b1), turns over like a playing card (b2), comes in from above (b3) or
+     fades only (b4). Leaving runs in reverse: first the card, then the slot closes.
+   - simple: fade with a small shift; the others jump to their new place. */
+.stagecraft.card-layer {
+  --card-gap: var(--spacer-16);
+  --card-inset: var(--spacer-16);
+  --ui-left: 0px;
+  --ui-top-left: 0px;
+  --ui-right: 0px;
+  --ui-bottom: 0px;
+  --ui-bottom-left: 0px;
+  --ui-bottom-right: 0px;
+  /* Rows: the free width between the scene controls and the sidebar. */
+  --card-height: min(
+    calc(var(--card-size) * 1vh),
+    calc(((100vw - var(--ui-left) - var(--ui-right) - 2 * var(--card-inset)) / var(--stagecraft-card-count)
+      - var(--card-gap)) * 3 / 2)
+  );
+  --card-enter: 320ms;
+  --card-exit: 220ms;
+  --card-slot: 320ms;
+  /* The others moving to their new place (FLIP, card-layer.mjs). */
+  --card-move: 400ms;
+  --card-zoom: 0.92;
+  --card-speaking-scale: 1.08;
+  --card-speaking-glow: var(--stagecraft-accent);
+  --card-dimmed: brightness(0.55);
+
+  position: fixed;
+  inset-inline: var(--ui-left) var(--ui-right);
+  inset-block-start: max(var(--card-inset), calc((100vh / 3 - var(--card-height)) / 2));
+  z-index: var(--z-index-canvas);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-inline: var(--card-inset);
+  pointer-events: none;
+
+  /* Another scene viewed (card-layer.mjs): hidden, keeping size and place for the return. Children may not set
+     visibility themselves, or they would show through. */
+  &.off-stage {
+    visibility: hidden;
+  }
+
+  &[data-position="bottom"] {
+    inset-block: auto calc(var(--ui-bottom) + var(--card-inset));
+    align-items: flex-end;
+  }
+
+  &[data-position="center"] {
+    inset-block-start: calc((100vh - var(--card-height)) / 2);
+  }
+
+  /* Columns, top to bottom: the free height between the top (below the scene navigation on the left) and the
+     bottom edge. */
+  &:is([data-position="left"], [data-position="right"]) {
+    --column-top: var(--card-inset);
+    --column-bottom: var(--card-inset);
+    --card-height: min(
+      calc(var(--card-size) * 1vh),
+      calc((100vh - var(--column-top) - var(--column-bottom)) / var(--stagecraft-card-count) - var(--card-gap))
+    );
+    inset-block: var(--column-top) auto;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-inline: 0;
+
+    .card-layer-card {
+      inline-size: auto;
+      block-size: var(--card-height);
+      margin-inline: 0;
+      margin-block: 0 var(--card-gap);
+    }
+  }
+
+  &[data-position="left"] {
+    --column-top: calc(var(--ui-top-left) + var(--card-inset));
+    --column-bottom: calc(var(--ui-bottom-left) + var(--card-inset));
+    inset-inline: calc(var(--ui-left) + var(--card-inset)) auto;
+    align-items: flex-start;
+  }
+
+  &[data-position="right"] {
+    --column-bottom: calc(var(--ui-bottom-right) + var(--card-inset));
+    inset-inline: auto calc(var(--ui-right) + var(--card-inset));
+    align-items: flex-end;
+  }
+
+  /* A speaking card grows away from the edge it stands at. */
+  .card-layer-face {
+    transform-origin: top center;
+  }
+
+  &[data-position="center"] .card-layer-face {
+    transform-origin: center;
+  }
+
+  &[data-position="bottom"] .card-layer-face {
+    transform-origin: bottom center;
+  }
+
+  &[data-position="left"] .card-layer-face {
+    transform-origin: left center;
+  }
+
+  &[data-position="right"] .card-layer-face {
+    transform-origin: right center;
+  }
+
+  .card-layer-card {
+    flex: none;
+    display: flex;
+    justify-content: center;
+    inline-size: calc(var(--card-height) * var(--card-aspect, 0.6667));
+    margin-inline: calc(var(--card-gap) / 2);
+    perspective: calc(var(--card-height) * 4);
+
+    &.failed {
+      display: none;
+    }
+
+    /* A leaving card taken out of the row (card-layer.mjs): below the others, which close up over it. */
+    &.detached {
+      z-index: -1;
+    }
+  }
+
+  .card-layer-face {
+    flex: none;
+    inline-size: calc(var(--card-height) * var(--card-aspect, 0.6667));
+    block-size: var(--card-height);
+    opacity: 0;
+    transition-property: opacity, translate, scale, rotate, filter;
+    transition-duration: var(--card-enter);
+    transition-timing-function: ease-out;
+
+    img {
+      display: block;
+      inline-size: 100%;
+      block-size: 100%;
+      object-fit: contain;
+    }
+  }
+
+  .card-layer-card.ready:not([data-closing]) .card-layer-face {
+    opacity: 1;
+  }
+
+  /* GM only: a click on a card sets it as speaker. Hover and press each look different. */
+  &.gm .card-layer-card.ready:not([data-closing]) .card-layer-face {
+    pointer-events: auto;
+    cursor: pointer;
+
+    &:hover {
+      outline: var(--spacer-2) solid var(--color-warm-1);
+      outline-offset: var(--spacer-2);
+    }
+
+    &:active {
+      outline-color: var(--stage-current-color);
+    }
+  }
+
+  .card-layer-card[data-closing] .card-layer-face {
+    transition-duration: var(--card-exit);
+    transition-timing-function: ease-in;
+  }
+
+  /* Entry and exit of the face: the state before "ready" and while closing. */
+  &:is([data-transition="a2b1"], [data-transition="a1b1"]) .card-layer-card:is(:not(.ready), [data-closing])
+  .card-layer-face {
+    scale: var(--card-zoom);
+  }
+
+  &[data-transition="a1b2"] {
+    .card-layer-face {
+      transition-duration: 520ms;
+      transition-timing-function: cubic-bezier(0.3, 0.7, 0.3, 1);
+    }
+
+    .card-layer-card:not(.ready) .card-layer-face {
+      rotate: y 180deg;
+    }
+
+    .card-layer-card[data-closing] .card-layer-face {
+      rotate: y -180deg;
+      transition-duration: 420ms;
+    }
+  }
+
+  &[data-transition="a1b3"] {
+    .card-layer-face {
+      transition-duration: 420ms;
+      transition-timing-function: cubic-bezier(0.2, 0.8, 0.3, 1);
+    }
+
+    .card-layer-card:is(:not(.ready), [data-closing]) .card-layer-face {
+      translate: 0 calc(-1 * (var(--card-height) + 100vh / 3));
+    }
+
+    .card-layer-card[data-closing] .card-layer-face {
+      transition-duration: 320ms;
+    }
+  }
+
+  &[data-transition="simple"] .card-layer-card:is(:not(.ready), [data-closing]) .card-layer-face {
+    translate: 0 calc(-1 * var(--card-gap));
+  }
+
+  /* A1: the slot is closed until the image is ready, opens, and closes again after the card has left. */
+  &[data-transition^="a1"] {
+    transition: --stagecraft-card-count var(--card-slot) ease-in-out;
+
+    .card-layer-card {
+      transition-property: inline-size, margin-inline;
+      transition-duration: var(--card-slot);
+      transition-timing-function: ease-in-out;
+    }
+
+    .card-layer-card:is(:not(.ready), [data-closing]) {
+      inline-size: 0;
+      margin-inline: 0;
+    }
+
+    /* In a column the slot opens and closes in height. */
+    &:is([data-position="left"], [data-position="right"]) {
+      .card-layer-card {
+        transition-property: block-size, margin-block;
+      }
+
+      .card-layer-card:is(:not(.ready), [data-closing]) {
+        inline-size: auto;
+        block-size: 0;
+        margin-block: 0;
+      }
+    }
+
+    .card-layer-card[data-closing] {
+      transition-delay: var(--card-exit);
+    }
+  }
+
+  /* Speaking: slightly larger with a warm glow; the others step back. */
+  .card-layer-card.ready.speaking .card-layer-face {
+    scale: var(--card-speaking-scale);
+    filter: drop-shadow(0 0 calc(var(--card-gap) / 2) var(--card-speaking-glow));
+  }
+
+  /* Dimmed per card (card-layer.mjs): a card that leaves keeps its look, so ending the dialog does not light up the
+     others while they fade. */
+  .card-layer-card.dimmed .card-layer-face {
+    filter: var(--card-dimmed);
+  }
+
+  /* The speaking card leaves like the others, with the zoom from its own size. */
+  &:is([data-transition="a2b1"], [data-transition="a1b1"]) .card-layer-card.speaking[data-closing] .card-layer-face {
+    scale: calc(var(--card-speaking-scale) * var(--card-zoom));
+  }
+
+  /* Reduced motion: every transition becomes a short fade, without moving, turning or zooming. */
+  @media (prefers-reduced-motion: reduce) {
+    --card-enter: 100ms;
+    --card-exit: 100ms;
+
+    .card-layer-card,
+    .card-layer-card .card-layer-face,
+    .card-layer-card.ready.speaking .card-layer-face {
+      translate: none !important;
+      rotate: none !important;
+      scale: none !important;
+    }
+
+    .card-layer-card {
+      transition: none !important;
+    }
+
+    .card-layer-face {
+      transition-duration: 100ms !important;
+    }
+  }
+}
+
+/* ---------- Card browser ---------- */
+
+/* The shared tiles above, in the 2:3 format of the cards and narrower. */
+.stagecraft.card-browser {
+  --stage-tile-ratio: 2 / 3;
+  --stage-tile-min-inline-size: 9rem;
+  --stage-tile-estimated-block-size: 13.5rem;
+
+  /* The card images bring their own frame; the button border would double it (also on hover). */
+  .stage-tile-preview {
+    border: none;
+  }
+
+  /* The card name is plain text: clicks go through to the tile, no hover underline. */
+  .stage-tile:is(:hover, :focus-within) .stage-tile-top > .stage-tile-name-static {
+    pointer-events: none;
+    text-decoration: none;
+  }
+
+  /* "Speaking" toggle at the top end of a shown card the clicks work on (class "working": in the cast, or in the
+     draft in planning mode; not "covered", i.e. hidden there), visible without hover. A hidden one shows an eye
+     in the same place. */
+  :is(.stage-tile-speaking, .stage-tile-covered) {
+    --speaking-size: calc(var(--font-size-12) + 2 * var(--stage-gap-tight));
+
+    position: absolute;
+    inset-block-start: var(--stage-overlay-inset);
+    inset-inline-end: var(--stage-overlay-inset);
+    display: none;
+    inline-size: var(--speaking-size);
+    block-size: var(--speaking-size);
+    min-block-size: 0;
+    padding: 0;
+    border: none;
+    border-radius: var(--stage-tile-radius);
+    background: var(--stage-overlay-scrim);
+    color: var(--stage-overlay-text);
+    font-size: var(--font-size-12);
+    pointer-events: auto;
+
+    &[aria-pressed="true"] {
+      background: var(--stage-current-color);
+      color: var(--stage-current-text-color);
+    }
+  }
+
+  .stage-tile.working:not(.covered) .stage-tile-speaking,
+  .stage-tile.covered .stage-tile-covered {
+    display: grid;
+    place-items: center;
+  }
+
+  /* Leave room for the toggle next to the name. */
+  .stage-tile.working .stage-tile-top {
+    padding-inline-end: calc(2 * var(--stage-overlay-inset) + var(--font-size-12) + 2 * var(--stage-gap-tight));
+  }
+
+  /* Position picker in the header: one group of icon buttons, the position in force pressed. */
+  /* Card position: a button showing the current position, opening a small menu (a popover anchored to it where
+     the browser supports it, centred otherwise). The current entry has a check, the default position a note. */
+  .card-position-toggle {
+    display: flex;
+    align-items: center;
+    gap: var(--spacer-2);
+    padding-inline: var(--stage-gap);
+  }
+
+  /* Shared by the card position menu and the history "Recently shown" (in the strip). */
+  :is(.card-position-menu, .card-history-menu) {
+    min-inline-size: 14rem;
+    padding: var(--stage-gap-tight);
+    border: var(--spacer-2) solid var(--color-border);
+    border-radius: var(--stage-tile-radius);
+    background: var(--color-cool-5-90);
+    color: var(--stage-overlay-text);
+    box-shadow: var(--stage-popup-shadow);
+
+    button {
+      display: flex;
+      align-items: center;
+      gap: var(--stage-gap);
+      inline-size: 100%;
+      justify-content: flex-start;
+      border-color: transparent;
+      background: none;
+      color: inherit;
+
+      &:hover,
+      &:focus-visible {
+        background: var(--stage-overlay-scrim);
+      }
+    }
+  }
+
+  .card-position-menu-title {
+    margin: 0;
+    padding: var(--stage-gap-tight) var(--stage-gap);
+    color: var(--color-text-subtle);
+    font-size: var(--font-size-12);
+  }
+
+  .card-position-menu-label {
+    flex: 1;
+    text-align: start;
+  }
+
+  .card-position-menu-default {
+    color: var(--color-text-subtle);
+    font-size: var(--font-size-12);
+  }
+
+  .card-position-menu-check {
+    visibility: hidden;
+  }
+
+  /* History entry: the whole row shows it again; the save button beside it makes it a dialog. */
+  .card-history-menu {
+    min-inline-size: 20rem;
+    max-inline-size: 28rem;
+  }
+
+  .card-history-entry {
+    display: flex;
+    align-items: center;
+    gap: var(--spacer-2);
+
+    button.icon {
+      flex: none;
+      inline-size: var(--input-height);
+    }
+  }
+
+  .card-history-restore {
+    flex: 1;
+    min-inline-size: 0;
+    block-size: auto;
+    min-block-size: calc(var(--card-dialog-thumb-block-size) + 2 * var(--spacer-4));
+    padding: var(--spacer-2) var(--stage-gap);
+  }
+
+  .card-history-names {
+    flex: 1;
+    min-inline-size: 0;
+    overflow: hidden;
+    text-align: start;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .card-history-time {
+    flex: none;
+    color: var(--color-text-subtle);
+    font-size: var(--font-size-12);
+  }
+
+  .card-position-menu [aria-pressed="true"] .card-position-menu-check {
+    visibility: visible;
+  }
+
+  @supports (position-area: block-end) {
+    :is(.card-position-menu, .card-history-menu) {
+      inset: auto;
+      margin: var(--stage-gap-tight) 0 0;
+      position-area: block-end span-inline-start;
+      position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
+    }
+  }
+
+  /* Planning mode: the cards of the draft get a dashed ring just inside the tile, so it never collides with the
+     rings outside (selection, on stage) and is not clipped by the scrolling grid; the colour differs from the green
+     of "on stage" and the orange of selection. A pseudo-element after the overlay, so the image cannot cover it. */
+  .stage-tile.drafted::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: var(--stage-selected-ring-width) dashed var(--stage-draft-color);
+    border-radius: var(--stage-tile-radius);
+    pointer-events: none;
+  }
+
+  /* "Plan" pressed: in the colour of the draft. */
+  button[data-action="togglePlanning"][aria-pressed="true"] {
+    background: var(--stage-draft-color);
+    border-color: var(--stage-draft-color);
+    color: var(--color-cool-5);
+  }
+
+  /* "Shown" strip: the cards the players see, small, with gaps that set where the next card goes. In planning
+     mode the draft, framed dashed like its tiles, with its buttons at the end. */
+  .card-shown {
+    --card-shown-height: 3.75rem;
+    --card-shown-gap-size: var(--spacer-12);
+    --card-shown-marker: var(--stage-selected-color);
+
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--stage-gap);
+    min-inline-size: 0;
+
+    /* Always there, the same height with or without cards, so the tiles below never jump: as high as the list of
+       cards (their height plus the list's padding) inside the border, no padding of its own in the block axis. */
+    min-block-size: calc(var(--card-shown-height) + 4 * var(--spacer-2));
+    padding: 0 var(--stage-gap);
+    border: var(--spacer-2) solid transparent;
+    border-radius: var(--stage-tile-radius);
+
+    &.planning {
+      border: var(--spacer-2) dashed var(--stage-draft-color);
+    }
+
+    /* Tiles dragged over it: they join the cast hidden. */
+    &.drop-active {
+      border: var(--spacer-2) dashed var(--stagecraft-accent);
+    }
+  }
+
+  /* The main action of the strip, in the same place in both modes: "Hide all", or "Show" for the draft. */
+  .card-strip-main {
+    border-color: var(--stage-selected-color);
+    background: color-mix(in srgb, var(--stage-selected-color) 20%, transparent);
+
+    &.show {
+      border-color: var(--stage-draft-color);
+      background: var(--stage-draft-color);
+      color: var(--color-cool-5);
+    }
+
+    &:disabled {
+      border-color: var(--color-border);
+      background: none;
+    }
+  }
+
+  .card-draft-hint {
+    flex: 1;
+    margin: 0;
+    color: var(--color-text-subtle);
+    font-size: var(--font-size-12);
+  }
+
+  /* The block margin only counts when the buttons wrap below the cards (narrow window): room to the border then.
+     In one row they are lower than the cards anyway. */
+  .card-draft-actions {
+    display: flex;
+    flex: none;
+    gap: var(--stage-gap-tight);
+    margin-block: var(--stage-gap-tight);
+    margin-inline-start: auto;
+  }
+
+  .card-shown-label {
+    flex: none;
+    color: var(--color-text-subtle);
+    font-size: var(--font-size-12);
+  }
+
+  /* Scrolls sideways when the window is narrow; overflow-x also clips vertically, so the padding keeps room for
+     the speaking outline and the marker. */
+  .card-shown-list {
+    display: flex;
+    align-items: stretch;
+    min-inline-size: 0;
+    margin: 0;
+    padding: var(--spacer-2);
+    list-style: none;
+    overflow-x: auto;
+
+    /* Foundry gives every li but the last a bottom margin, which made the list taller than its cards. */
+    > li {
+      margin: 0;
+    }
+  }
+
+  .card-shown-card {
+    position: relative;
+    flex: none;
+    block-size: var(--card-shown-height);
+    aspect-ratio: 2 / 3;
+    border-radius: var(--stage-tile-radius);
+    overflow: hidden;
+    background: var(--stage-tile-placeholder);
+
+    /* Hidden in the cast: dimmed, with an eye in the middle. */
+    &.covered img {
+      opacity: 0.35;
+      filter: grayscale(1);
+    }
+
+    .card-shown-covered {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      color: var(--color-text-primary);
+      font-size: var(--font-size-14);
+      pointer-events: none;
+    }
+
+    /* Keyboard focus as a ring inside: the scrolling list would clip one outside, and the outline is the speaker's. */
+    &:focus {
+      outline: none;
+      box-shadow: none;
+    }
+
+    &:focus-visible::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border: var(--stage-focus-ring-width) solid var(--stage-focus-ring-color);
+      border-radius: inherit;
+      pointer-events: none;
+    }
+
+    &.speaking {
+      outline: var(--spacer-2) solid var(--card-shown-marker);
+      outline-offset: calc(-1 * var(--spacer-2));
+    }
+
+    /* Drag and drop: the card can be grabbed; while it is dragged, its place stays faintly visible. */
+    &[draggable="true"] {
+      cursor: grab;
+    }
+
+    &.dragging {
+      opacity: 0.4;
+    }
+
+    img {
+      display: block;
+      inline-size: 100%;
+      block-size: 100%;
+      object-fit: cover;
+      border: none;
+    }
+
+    span {
+      display: block;
+      padding: var(--spacer-2);
+      font-size: var(--font-size-10);
+      overflow: hidden;
+    }
+  }
+
+  .card-shown-gap {
+    flex: none;
+    display: flex;
+
+    button {
+      inline-size: var(--card-shown-gap-size);
+      min-inline-size: 0;
+      block-size: auto;
+      min-block-size: var(--card-shown-height);
+      padding: 0;
+      border: none;
+      border-radius: var(--spacer-2);
+      background: transparent;
+    }
+
+    /* The marker: a bar with an arrow on top; on hover a faint preview of it. */
+    button:hover {
+      background: linear-gradient(var(--card-shown-marker), var(--card-shown-marker)) center / var(--spacer-2) 100%
+        no-repeat;
+      opacity: 0.5;
+    }
+
+    /* Foundry's focus glow (button:focus) would be clipped by the scrolling list, and after a mouse click the marker
+       already shows the result: no glow; for the keyboard an outline inside the gap. */
+    button:focus {
+      outline: none;
+      box-shadow: none;
+    }
+
+    button:focus-visible {
+      outline: var(--stage-focus-ring-width) solid var(--stage-focus-ring-color);
+      outline-offset: calc(-1 * var(--stage-focus-ring-width));
+    }
+
+    /* Where a dragged card would go: a bar in the colour of the text, so it differs from the marker. */
+    button.drop-target {
+      background: linear-gradient(var(--color-text-primary), var(--color-text-primary)) center / var(--spacer-4) 100%
+        no-repeat;
+      opacity: 1;
+    }
+
+    button[aria-pressed="true"] {
+      background:
+        conic-gradient(from 135deg at 50% var(--spacer-8), var(--card-shown-marker) 90deg, transparent 0)
+          center top / var(--card-shown-gap-size) var(--spacer-8) no-repeat,
+        linear-gradient(var(--card-shown-marker), var(--card-shown-marker)) center / var(--spacer-2) 100% no-repeat;
+      opacity: 1;
+    }
+  }
+}
+
+/* ---------- Saved dialogs (card browser) ---------- */
+
+.stagecraft.card-browser {
+  /* Height of the small card images of a dialog; also in the history "Recently shown". */
+  --card-dialog-thumb-block-size: 1.875rem;
+
+  /* Collapsed behind a toggle on every opening; open, a wrapping list of buttons with small card images, about
+     three rows, then it scrolls. The dialog shown has the green ring of "on stage", the one loaded into the draft
+     the dashed ring of the draft. */
+  .card-dialogs {
+    --card-dialogs-max-block-size: 8rem;
+
+    display: flex;
+    align-items: flex-start;
+    gap: var(--stage-gap);
+    min-inline-size: 0;
+
+    &.empty {
+      display: none;
+    }
+  }
+
+  /* A quiet text button; the chevron points to the inline end while closed and down while open. */
+  .card-dialogs-toggle {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: var(--stage-gap-tight);
+    inline-size: auto;
+    min-block-size: 0;
+    padding: var(--spacer-2) var(--stage-gap-tight);
+    border-color: transparent;
+    background: none;
+    color: var(--color-text-subtle);
+    font-size: var(--font-size-12);
+
+    &:hover,
+    &:focus-visible {
+      color: var(--color-text-primary);
+    }
+
+    i {
+      rotate: -90deg;
+      font-size: var(--font-size-11);
+    }
+
+    &:dir(rtl) i {
+      rotate: 90deg;
+    }
+
+    &[aria-expanded="true"] i {
+      rotate: 0deg;
+    }
+  }
+
+  .card-dialogs-list {
+    display: flex;
+    flex: 1;
+    flex-wrap: wrap;
+    gap: var(--stage-gap-tight) var(--stage-gap);
+    min-inline-size: 0;
+    max-block-size: var(--card-dialogs-max-block-size);
+    margin: 0;
+    padding: var(--spacer-2);
+    list-style: none;
+    overflow-y: auto;
+  }
+
+  .card-dialogs-none {
+    margin: 0;
+    color: var(--color-text-subtle);
+    font-size: var(--font-size-12);
+  }
+
+  .card-dialog {
+    display: flex;
+    border-radius: var(--stage-tile-radius);
+
+    &.current {
+      outline: var(--spacer-2) solid var(--stage-current-color);
+    }
+
+    &.editing {
+      outline: var(--spacer-2) dashed var(--stage-draft-color);
+    }
+  }
+
+  .card-dialog-show {
+    display: flex;
+    align-items: center;
+    gap: var(--stage-gap-tight);
+    inline-size: auto;
+    block-size: auto;
+    min-block-size: calc(var(--card-dialog-thumb-block-size) + 2 * var(--spacer-4));
+    padding: var(--spacer-2) var(--stage-gap);
+    white-space: nowrap;
+  }
+
+  .card-dialog-thumbs {
+    display: flex;
+    align-items: center;
+    gap: var(--spacer-2);
+
+    :is(img, .card-dialog-dummy) {
+      display: block;
+      block-size: var(--card-dialog-thumb-block-size);
+      inline-size: auto;
+      aspect-ratio: 2 / 3;
+      border: none;
+      border-radius: var(--spacer-2);
+      object-fit: cover;
+      background: var(--stage-tile-placeholder);
+    }
+
+    /* Hidden in the cast of the dialog or history entry. */
+    img.covered {
+      opacity: 0.35;
+      filter: grayscale(1);
+    }
+  }
+
+  .card-dialog-more {
+    color: var(--color-text-subtle);
+    font-size: var(--font-size-10);
+  }
+
+  .card-dialog-name {
+    max-inline-size: 14rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+/* ---------- Dialog properties window ---------- */
+
+.stagecraft.dialog-properties {
+  .window-content,
+  .dialog-properties-part {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacer-12);
+  }
+
+  .dialog-properties-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacer-4);
+  }
+
+  .dialog-properties-hint {
+    margin: 0;
+    color: var(--color-text-subtle);
+    font-size: var(--font-size-12);
+  }
+
+  h3 {
+    margin: 0 0 var(--spacer-4);
+    border: none;
+    font-size: var(--font-size-14);
+  }
+
+  .dialog-properties-cards ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacer-8);
+    margin: 0 0 var(--spacer-4);
+    padding: var(--spacer-2);
+    list-style: none;
+  }
+
+  .dialog-properties-cards li {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacer-2);
+    inline-size: 4rem;
+    font-size: var(--font-size-10);
+    text-align: center;
+
+    :is(img, .dialog-properties-dummy) {
+      display: block;
+      block-size: 3.75rem;
+      inline-size: auto;
+      aspect-ratio: 2 / 3;
+      border: none;
+      border-radius: var(--spacer-2);
+      object-fit: cover;
+      background: var(--color-cool-5-50);
+    }
+
+    &.speaking img {
+      outline: var(--spacer-2) solid var(--stagecraft-accent);
+    }
+
+    &.missing :is(img, .dialog-properties-dummy) {
+      opacity: 0.4;
+    }
+
+    &.covered img {
+      opacity: 0.35;
+      filter: grayscale(1);
+    }
+  }
+
+  .dialog-properties-card-name {
+    inline-size: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .dialog-properties-badge {
+    color: var(--color-text-subtle);
+  }
+
+  fieldset {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacer-4);
+    margin: 0;
+  }
+
+  .dialog-properties-choice {
+    display: flex;
+    align-items: center;
+    gap: var(--spacer-4);
+  }
+
+  /* Chosen tags as chips with the marker colour of their prefix, like the tag labels on the tiles. */
+  .dialog-properties-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacer-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    li {
+      --tag-color: var(--color-text-subtle);
+      display: flex;
+      align-items: center;
+      gap: var(--spacer-4);
+      padding-inline: var(--spacer-8) var(--spacer-2);
+      border-inline-start: var(--spacer-4) solid var(--tag-color);
+      border-radius: var(--spacer-4);
+      background: var(--color-cool-5-50);
+
+      &[data-kind="session"] { --tag-color: var(--color-level-info); }
+
+      &[data-kind="scene"] { --tag-color: var(--stagecraft-tag-color-scene); }
+      &[data-kind="plot"] { --tag-color: var(--color-level-warning); }
+      &[data-kind="npc"] { --tag-color: var(--color-level-success); }
+      &[data-kind="faction"] { --tag-color: var(--stagecraft-tag-color-faction); }
+      &[data-kind="location"] { --tag-color: var(--color-level-error); }
+      &[data-kind="free"] { --tag-color: var(--color-light-1); }
+    }
+  }
+
+  .dialog-properties-chip-text {
+    flex: 1;
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .dialog-properties-chips button.icon {
+    flex: none;
+    inline-size: var(--font-size-24);
+    block-size: var(--font-size-24);
+    min-block-size: 0;
+    font-size: var(--font-size-12);
+  }
+
+  .dialog-properties-add {
+    display: flex;
+    gap: var(--spacer-4);
+
+    input {
+      flex: 1;
+    }
+
+    button {
+      flex: none;
+      inline-size: auto;
+    }
+  }
+
+  .dialog-properties-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacer-8);
+
+    button {
+      flex: none;
+      inline-size: auto;
+    }
+  }
+}
+
+/* ---------- Preview cache window ---------- */
+
+.stagecraft.thumbnail-cache {
+  --thumb-cache-gap: var(--spacer-8);
+  --thumb-cache-gap-tight: var(--spacer-4);
+  --thumb-cache-progress-color: var(--stagecraft-accent);
+
+  .thumb-cache {
+    display: flex;
+    flex-direction: column;
+    gap: var(--thumb-cache-gap);
+  }
+
+  .thumb-cache-status {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: var(--thumb-cache-gap-tight) var(--spacer-16);
+    margin: 0;
+
+    dt {
+      font-weight: bold;
+    }
+
+    dd {
+      margin: 0;
+      overflow-wrap: anywhere;
+    }
+  }
+
+  :is(.thumb-cache-note, .thumb-cache-hint, .thumb-cache-warning) {
+    margin: 0;
+  }
+
+  .thumb-cache-hint {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-12);
+  }
+
+  .thumb-cache-warning {
+    font-weight: bold;
+  }
+
+  /* Native <progress>, only recoloured (fuller styling would drop the native rendering). */
+  .thumb-cache-progress {
+    display: flex;
+    align-items: center;
+    gap: var(--thumb-cache-gap);
+
+    progress {
+      flex: 1;
+      accent-color: var(--thumb-cache-progress-color);
+    }
+  }
+
+  :is(.thumb-cache-actions, .thumb-cache-copy) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--thumb-cache-gap);
+
+    button {
+      flex: none;
+      inline-size: auto;
+    }
+  }
+
+  .thumb-cache-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--thumb-cache-gap-tight);
+
+    summary {
+      cursor: pointer;
+    }
+
+    &[open] > :not(summary) {
+      margin-block-start: var(--thumb-cache-gap-tight);
+    }
+
+    textarea {
+      inline-size: 100%;
+      resize: vertical;
+      font-family: var(--font-monospace);
+      font-size: var(--font-size-12);
+    }
+  }
+}
+
+/* ---------- Tag editor ---------- */
+
+.stagecraft.tag-editor {
+  --tag-editor-gap: var(--spacer-8);
+  --tag-editor-gap-tight: var(--spacer-4);
+  --tag-editor-radius: var(--spacer-4);
+  --tag-editor-marker-width: var(--spacer-4);
+
+  .tag-editor-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tag-editor-gap);
+  }
+
+  .tag-editor-note {
+    margin: 0;
+    color: var(--color-text-secondary);
+  }
+
+  .tag-editor-variants {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--tag-editor-gap-tight) var(--spacer-16);
+
+    label {
+      display: flex;
+      align-items: center;
+      gap: var(--tag-editor-gap-tight);
+    }
+  }
+
+  .tag-editor-count {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-12);
+  }
+
+  .tag-editor-current h3 {
+    margin: 0 0 var(--tag-editor-gap-tight);
+    font-size: var(--font-size-14);
+  }
+
+  .tag-editor-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--tag-editor-gap-tight);
+  }
+
+  /* Same prefix colours as the tile labels; partial tags dashed, removed ones struck through. */
+  .tag-editor-tag {
+    --tag-color: var(--color-text-subtle);
+    display: flex;
+    align-items: center;
+    gap: var(--tag-editor-gap);
+    margin: 0;
+    padding: var(--spacer-2) var(--tag-editor-gap);
+    border: var(--spacer-2) solid var(--color-border);
+    border-inline-start: var(--tag-editor-marker-width) solid var(--tag-color);
+    border-radius: var(--tag-editor-radius);
+
+    &[data-kind="session"] { --tag-color: var(--color-level-info); }
+
+    &[data-kind="scene"] { --tag-color: var(--stagecraft-tag-color-scene); }
+    &[data-kind="plot"] { --tag-color: var(--color-level-warning); }
+    &[data-kind="npc"] { --tag-color: var(--color-level-success); }
+    &[data-kind="faction"] { --tag-color: var(--stagecraft-tag-color-faction); }
+    &[data-kind="location"] { --tag-color: var(--color-level-error); }
+    &[data-kind="free"] { --tag-color: var(--color-text-primary); }
+
+    &.partial {
+      border-style: dashed;
+      border-inline-start-style: solid;
+    }
+
+    &.removed .tag-editor-name {
+      text-decoration: line-through;
+      color: var(--color-text-secondary);
+    }
+
+    &.added .tag-editor-name {
+      font-weight: bold;
+    }
+
+    button {
+      flex: none;
+      inline-size: auto;
+    }
+  }
+
+  .tag-editor-name {
+    flex: 1;
+    min-inline-size: 0;
+    overflow-wrap: anywhere;
+  }
+}
+
+/* ---------- Suggestion list (tag editor, dialog properties) ---------- */
+
+/* Suggestions of a text input (scripts/apps/suggestion-list.mjs): a popover in the top layer, so the window does
+   not clip it. The script passes the input's geometry; the list sits below it, or above with class "above", and is
+   never taller than the room on that side. One line per suggestion; tags get the marker colour of their prefix. */
+.stagecraft .stagecraft-suggestions {
+  --stagecraft-suggestions-gap: var(--spacer-4);
+  --stagecraft-suggestions-max-block-size: 16rem;
+  --stagecraft-suggestions-radius: var(--spacer-4);
+  --stagecraft-suggestions-marker-width: var(--spacer-4);
+  /* Same tight line height as the tile labels (Foundry's --line-height-* exist only for V1 apps). */
+  --stagecraft-suggestion-line-height: 1.25rem;
+
+  position: fixed;
+  inset: auto;
+  inset-inline-start: var(--stagecraft-suggestions-left);
+  inset-block-start: calc(var(--stagecraft-suggestions-top) + var(--stagecraft-suggestions-gap));
+  inline-size: var(--stagecraft-suggestions-width);
+  max-block-size: min(
+    var(--stagecraft-suggestions-max-block-size),
+    calc(var(--stagecraft-suggestions-room) - (2 * var(--stagecraft-suggestions-gap)))
+  );
+  overflow-y: auto;
+  list-style: none;
+  margin: 0;
+  padding: var(--spacer-4);
+  border: var(--spacer-2) solid var(--color-border);
+  border-radius: var(--stagecraft-suggestions-radius);
+  background: var(--color-cool-5-90);
+  color: var(--color-light-1);
+  box-shadow: 0 0 var(--spacer-8) var(--color-cool-5-75);
+
+  &.above {
+    inset-block-start: auto;
+    inset-block-end: calc(var(--stagecraft-suggestions-bottom) + var(--stagecraft-suggestions-gap));
+  }
+
+  li {
+    --tag-color: var(--color-text-subtle);
+    display: flex;
+    align-items: center;
+    gap: var(--spacer-8);
+    margin: 0;
+    padding: var(--spacer-2) var(--spacer-8);
+    border-inline-start: var(--stagecraft-suggestions-marker-width) solid var(--tag-color);
+    border-radius: var(--stagecraft-suggestions-radius);
+    line-height: var(--stagecraft-suggestion-line-height);
+    cursor: var(--cursor-pointer);
+
+    &[data-kind="session"] { --tag-color: var(--color-level-info); }
+
+    &[data-kind="scene"] { --tag-color: var(--stagecraft-tag-color-scene); }
+    &[data-kind="plot"] { --tag-color: var(--color-level-warning); }
+    &[data-kind="npc"] { --tag-color: var(--color-level-success); }
+    &[data-kind="faction"] { --tag-color: var(--stagecraft-tag-color-faction); }
+    &[data-kind="location"] { --tag-color: var(--color-level-error); }
+    &[data-kind="free"] { --tag-color: var(--color-light-1); }
+
+    &:hover,
+    &[aria-selected="true"] {
+      background: var(--color-cool-5-75);
+      outline: var(--spacer-2) solid var(--stagecraft-accent);
+    }
+  }
+
+  /* Long labels end with an ellipsis, the note (a count) stays visible. */
+  .stagecraft-suggestion-text {
+    flex: 1;
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .stagecraft-suggestion-note {
+    flex: none;
+    color: var(--color-light-5);
+    font-size: var(--font-size-12);
+  }
+}
+
+/* ---------- Shared ---------- */
+
+/* Text for screen readers only, e.g. the chip type next to its icon. */
+.stagecraft .stagecraft-visually-hidden {
+  /* One pixel, not zero: some screen readers skip elements without size. */
+  --stagecraft-hidden-size: 1px;
+  position: absolute;
+  inline-size: var(--stagecraft-hidden-size);
+  block-size: var(--stagecraft-hidden-size);
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---------- Tag export / import window ---------- */
+
+.stagecraft.tag-transfer {
+  --tag-transfer-gap: var(--spacer-8);
+  --tag-transfer-gap-tight: var(--spacer-4);
+  --tag-transfer-list-max-block-size: 16rem;
+
+  .tag-transfer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacer-16);
+  }
+
+  .tag-transfer-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tag-transfer-gap);
+
+    :is(h3, h4, p) {
+      margin: 0;
+    }
+  }
+
+  .tag-transfer-mode {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--tag-transfer-gap-tight) var(--spacer-16);
+
+    label {
+      display: flex;
+      align-items: center;
+      gap: var(--tag-transfer-gap-tight);
+    }
+  }
+
+  .tag-transfer-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--tag-transfer-gap);
+
+    button {
+      flex: none;
+      inline-size: auto;
+    }
+  }
+
+  .tag-transfer-note {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-12);
+  }
+
+  .tag-transfer-warning {
+    font-weight: bold;
+  }
+
+  .tag-transfer-preview {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tag-transfer-gap);
+    padding: var(--tag-transfer-gap);
+    border: var(--spacer-2) solid var(--color-border);
+    border-radius: var(--spacer-4);
+  }
+
+  .tag-transfer-summary {
+    margin: 0;
+    padding-inline-start: var(--spacer-16);
+  }
+
+  .tag-transfer-list {
+    summary {
+      cursor: pointer;
+    }
+
+    ul {
+      list-style: none;
+      margin: var(--tag-transfer-gap-tight) 0 0;
+      padding: 0;
+      max-block-size: var(--tag-transfer-list-max-block-size);
+      overflow-y: auto;
+    }
+
+    li {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: var(--tag-transfer-gap-tight);
+      margin: 0;
+      padding-block: var(--spacer-2);
+      border-block-end: var(--spacer-2) solid var(--color-border);
+    }
+  }
+
+  .tag-transfer-file {
+    flex: 1 1 100%;
+    overflow-wrap: anywhere;
+  }
+
+  /* Change marks: sign and strike-through, not only colour. */
+  .tag-transfer-tag {
+    font-size: var(--font-size-12);
+
+    &.added {
+      color: var(--color-level-success);
+    }
+
+    &.removed {
+      color: var(--color-level-error);
+      text-decoration: line-through;
+    }
+  }
+}
+
+/* ---------- Review tags window ---------- */
+
+.stagecraft.tag-review {
+  --tag-review-gap: var(--spacer-8);
+  --tag-review-gap-tight: var(--spacer-4);
+  --tag-review-radius: var(--spacer-4);
+  --tag-review-marker-width: var(--spacer-4);
+  --tag-review-files-max-block-size: 12rem;
+  /* Foundry sets --checkbox-size on the input only; named here so the file list can indent by it. */
+  --tag-review-check-size: var(--font-size-20);
+
+  input[type="checkbox"] {
+    --checkbox-size: var(--tag-review-check-size);
+  }
+
+  /* Foundry clips .window-content (overflow: hidden); the part itself scrolls. */
+  .tag-review {
+    flex: 1;
+    min-block-size: 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacer-16);
+  }
+
+  .tag-review-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tag-review-gap);
+
+    :is(h3, h4, p) {
+      margin: 0;
+    }
+
+    h4 {
+      margin-block-start: var(--tag-review-gap);
+    }
+  }
+
+  .tag-review-note {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-12);
+  }
+
+  .tag-review-warning {
+    font-weight: bold;
+  }
+
+  .tag-review-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+
+    > li {
+      margin: 0;
+      padding-block: var(--tag-review-gap-tight);
+      border-block-end: var(--spacer-2) solid var(--color-border);
+    }
+  }
+
+  /* Checkbox, text, then an optional button at the end. */
+  .tag-review-row {
+    display: flex;
+    align-items: center;
+    gap: var(--tag-review-gap);
+
+    > label,
+    > .tag-review-move {
+      flex: 1;
+      min-inline-size: 0;
+    }
+
+    button {
+      flex: none;
+      inline-size: auto;
+    }
+  }
+
+  /* Same prefix colours as the tag editor: a coloured marker on the leading edge. */
+  .tag-review-tag {
+    --tag-color: var(--color-text-subtle);
+    justify-self: start;
+    padding-inline: var(--tag-review-gap-tight);
+    border-inline-start: var(--tag-review-marker-width) solid var(--tag-color);
+    overflow-wrap: anywhere;
+
+    &[data-kind="session"] { --tag-color: var(--color-level-info); }
+
+    &[data-kind="scene"] { --tag-color: var(--stagecraft-tag-color-scene); }
+    &[data-kind="plot"] { --tag-color: var(--color-level-warning); }
+    &[data-kind="npc"] { --tag-color: var(--color-level-success); }
+    &[data-kind="faction"] { --tag-color: var(--stagecraft-tag-color-faction); }
+    &[data-kind="location"] { --tag-color: var(--color-level-error); }
+    &[data-kind="free"] { --tag-color: var(--color-text-primary); }
+  }
+
+  .tag-review-details {
+    /* Indented to the label text: past the checkbox and the row gap. */
+    margin-inline-start: calc(var(--tag-review-check-size) + var(--tag-review-gap));
+    font-size: var(--font-size-12);
+
+    summary {
+      cursor: pointer;
+      color: var(--color-text-secondary);
+    }
+  }
+
+  .tag-review-files {
+    list-style: none;
+    margin: var(--tag-review-gap-tight) 0 0;
+    padding: 0;
+    max-block-size: var(--tag-review-files-max-block-size);
+    overflow-y: auto;
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: var(--tag-review-gap-tight);
+      margin: 0;
+    }
+
+    label {
+      overflow-wrap: anywhere;
+    }
+  }
+
+  /* Old path, new path and tags of an orphan, stacked. */
+  .tag-review-move {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacer-2);
+  }
+
+  .tag-review-path {
+    overflow-wrap: anywhere;
+  }
+
+  .tag-review-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--tag-review-gap-tight);
+    font-size: var(--font-size-12);
+  }
+
+  .tag-review-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--tag-review-gap);
+
+    &.start {
+      justify-content: flex-start;
+    }
+
+    button {
+      flex: none;
+      inline-size: auto;
+    }
+  }
+
+  .tag-review-chosen {
+    flex: 1;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-12);
+    text-align: end;
+  }
+}
+
+/* ---------- Stage scene window ---------- */
+
+.stagecraft.stage-scene-config {
+  .stage-scene-config-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacer-8);
+
+    p {
+      margin: 0;
+    }
+  }
+
+  .stage-scene-note {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-12);
+  }
+
+  .stage-scene-warning {
+    font-weight: bold;
+  }
+
+  .stage-scene-lockview {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacer-8);
+    padding-block-start: var(--spacer-8);
+    border-block-start: var(--spacer-2) solid var(--color-border);
+
+    :is(h3, ul) {
+      margin: 0;
+    }
+
+    h3 {
+      font-size: var(--font-size-14);
+    }
+  }
+
+  .stage-scene-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacer-8);
+
+    button {
+      flex: none;
+      inline-size: auto;
+    }
+  }
+}
+
+/* ---------- Help tooltip of the browsers ("i" in the header) ---------- */
+
+/* Foundry's tooltip element gets this class from data-tooltip-class: short sections with a heading and a list. */
+#tooltip.stagecraft-info-tooltip {
+  max-inline-size: 24rem;
+  text-align: start;
+
+  section + section {
+    margin-block-start: var(--spacer-8);
+  }
+
+  h4 {
+    margin: 0 0 var(--spacer-4);
+    border: none;
+    font-family: inherit;
+    font-size: var(--font-size-13);
+    font-weight: bold;
+  }
+
+  ul {
+    margin: 0;
+    padding-inline-start: var(--spacer-16);
+  }
+
+  li + li {
+    margin-block-start: var(--spacer-2);
+  }
+}

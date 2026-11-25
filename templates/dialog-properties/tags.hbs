@@ -1,0 +1,28 @@
+{{!-- Tags like in the tag editor: the chosen ones with ✕, an input with suggestions from the known tags
+      (DialogProperties#bindTagInput). Kept in the window until "Save". --}}
+<div class="dialog-properties-field dialog-properties-part">
+  <label for="{{idPrefix}}-tag-input">{{localize "STAGECRAFT.Dialogs.Tags"}}</label>
+  {{#if tags.length}}
+  <ul class="dialog-properties-chips" aria-label="{{localize "STAGECRAFT.Dialogs.Tags"}}">
+    {{#each tags}}
+    <li data-kind="{{kind}}">
+      <span class="dialog-properties-chip-text">{{tag}}</span>
+      <button type="button" class="icon fa-solid fa-xmark" data-action="removeTag" data-index="{{@index}}"
+              aria-label="{{removeLabel}}" data-tooltip-text="{{removeLabel}}"></button>
+    </li>
+    {{/each}}
+  </ul>
+  {{/if}}
+  <div class="dialog-properties-add">
+    <input type="text" id="{{idPrefix}}-tag-input" data-suggest="tags"
+           autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" enterkeyhint="done"
+           role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="{{idPrefix}}-tag-suggestions"
+           aria-describedby="{{idPrefix}}-tags-hint" placeholder="Session:E137">
+    <button type="button" data-action="addTag">
+      <i class="fa-solid fa-plus" aria-hidden="true"></i> {{localize "STAGECRAFT.Tags.AddButton"}}
+    </button>
+  </div>
+  <p class="dialog-properties-hint" id="{{idPrefix}}-tags-hint">{{localize "STAGECRAFT.Dialogs.TagsHint"}}</p>
+  <ul class="stagecraft-suggestions" id="{{idPrefix}}-tag-suggestions" role="listbox" popover="manual"
+      aria-label="{{localize "STAGECRAFT.Tags.Known"}}"></ul>
+</div>

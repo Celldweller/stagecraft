@@ -1,0 +1,22 @@
+{{!-- Floats over the bottom of the tiles while selecting (CSS), so it never pushes the tiles; hidden it takes no
+      space ("concealed"). --}}
+<div class="stage-browser-selection{{#unless showSelection}} concealed{{/unless}}">
+  <p class="stage-browser-selection-count" role="status">
+    {{#if selectedCount}}{{localize "STAGECRAFT.Browser.SelectedCount" count=selectedCount}}
+    {{else}}{{localize "STAGECRAFT.Browser.SelectHint"}}{{/if}}
+  </p>
+  <button type="button" data-action="selectAll" data-tooltip="STAGECRAFT.Browser.SelectAllHint">
+    <i class="fa-solid fa-check-double" aria-hidden="true"></i> {{localize "STAGECRAFT.Browser.SelectAll"}}
+  </button>
+  <button type="button" data-action="editTags" {{#unless selectedCount}}disabled{{/unless}}>
+    <i class="fa-solid fa-tags" aria-hidden="true"></i> {{localize "STAGECRAFT.Tags.Edit"}}
+  </button>
+  {{#each selectionActions}}
+  <button type="button" data-action="{{action}}" {{#unless ../selectedCount}}disabled{{/unless}}>
+    <i class="{{icon}}" aria-hidden="true"></i> {{localize label}}
+  </button>
+  {{/each}}
+  <button type="button" data-action="clearSelection" {{#unless selectedCount}}disabled{{/unless}}>
+    <i class="fa-solid fa-xmark" aria-hidden="true"></i> {{localize "STAGECRAFT.Browser.ClearSelection"}}
+  </button>
+</div>

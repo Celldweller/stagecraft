@@ -1,0 +1,22 @@
+<div class="stage-browser-notice-slot">
+  {{#if stageNotice}}
+  <div class="stage-browser-notice" data-kind="stage">
+    <i class="fa-solid fa-panorama" aria-hidden="true"></i>
+    <p>{{stageNotice.text}}</p>
+    <button type="button" data-action="{{stageNotice.action}}">
+      <i class="fa-solid {{stageNotice.icon}}" aria-hidden="true"></i> {{stageNotice.label}}
+    </button>
+  </div>
+  {{/if}}
+  {{#if notice}}
+  <div class="stage-browser-notice">
+    <i class="fa-solid fa-lightbulb" aria-hidden="true"></i>
+    <p>{{notice}}</p>
+    <button type="button" data-action="openTagReview">
+      <i class="fa-solid fa-list-check" aria-hidden="true"></i> {{localize "STAGECRAFT.Browser.Review"}}
+    </button>
+    <button type="button" class="icon fa-solid fa-xmark" data-action="closeNotice"
+            aria-label="{{localize "STAGECRAFT.Browser.CloseNotice"}}" data-tooltip="STAGECRAFT.Browser.CloseNotice"></button>
+  </div>
+  {{/if}}
+</div>

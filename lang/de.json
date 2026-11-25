@@ -1,0 +1,532 @@
+{
+  "STAGECRAFT": {
+    "Settings": {
+      "StageSource": {
+        "Name": "Quelle der Stages",
+        "Hint": "Wo der Stage-Ordner liegt. Auf The Forge „The Forge Asset Library“ wählen.",
+        "data": "Benutzerdaten",
+        "forgevtt": "The Forge Asset Library",
+        "public": "Core-Daten",
+        "s3": "Amazon S3"
+      },
+      "StageRoot": {
+        "Name": "Stage-Ordner",
+        "Hint": "Ordner mit den Stage-Bildern. Alle Unterordner werden einbezogen; Ordner beeinflussen die Gruppierung nicht."
+      },
+      "CardSource": {
+        "Name": "Card-Quelle",
+        "Hint": "Wo der Card-Ordner liegt. Auf The Forge „The Forge Asset Library“ wählen."
+      },
+      "CardRoot": {
+        "Name": "Card-Ordner",
+        "Hint": "Ordner mit den NPC-Cards (Bilder im Format 2:3). Unterordner werden mit eingelesen."
+      },
+      "CardSize": {
+        "Name": "Größe der Cards",
+        "Hint": "Höhe einer Card, die den Spielern gezeigt wird, als Anteil der Fensterhöhe. Bei vielen Cards werden alle gleichmäßig kleiner, damit sie nebeneinander passen."
+      },
+      "CardTransition": {
+        "Name": "Auftritt der Cards",
+        "Hint": "Wie eine Card bei den Spielern erscheint und wieder geht. Ist im System reduzierte Bewegung eingestellt, wird jede Variante zu einem kurzen Überblenden.",
+        "a2b1": "An ihrem Platz, die anderen rücken nach (Einblenden mit leichtem Zoom)",
+        "a1b1": "Platz öffnet sich, Card tritt nach vorn (Einblenden mit leichtem Zoom)",
+        "a1b2": "Platz öffnet sich, Card wird umgedreht wie eine Spielkarte",
+        "a1b3": "Platz öffnet sich, Card kommt von oben",
+        "a1b4": "Platz öffnet sich, Card blendet ein",
+        "simple": "Einfach: Überblenden, die anderen springen an ihren Platz"
+      },
+      "CardsOnStageSwitch": {
+        "Name": "Cards beim Stage-Wechsel",
+        "Hint": "Was mit den gezeigten Cards geschieht, wenn du die Stage wechselst: Sie bleiben stehen, der Dialog endet (die Besetzung wird geleert), oder der Stage-Browser fragt jedes Mal nach.",
+        "keep": "Cards stehen lassen",
+        "end": "Dialog beenden (Besetzung leeren)",
+        "ask": "Nachfragen"
+      },
+      "CardPosition": {
+        "Name": "Position der Cards",
+        "Hint": "Wo die Cards bei den Spielern auf Stages ohne eigene Angabe stehen (pro Stage in ihren Einstellungen: Klick auf den Stage-Namen im Stage-Browser)."
+      },
+      "TagOrder": {
+        "Name": "Rangfolge der Tags",
+        "Hint": "Reihenfolge der Tag-Präfixe auf den Kacheln und im Tag-Editor, durch Kommas getrennt. Nicht genannte Präfixe folgen danach, Tags ohne Präfix zuletzt. Eine Kachel zeigt so viele Tags, wie in eine Zeile passen; die übrigen erscheinen beim Hovern."
+      },
+      "VariantPattern": {
+        "Name": "Muster für Varianten",
+        "Hint": "Wie Varianten in den Dateinamen von Stages und Cards erkannt werden. Eine Vorlage mit {name} und {variant}, zum Beispiel {name} ({variant}), oder ein regulärer Ausdruck zwischen Schrägstrichen mit den benannten Gruppen name und variant."
+      },
+      "ThumbSource": {
+        "Name": "Speicher für Vorschauen",
+        "Hint": "Wo die Vorschaubilder der Stages liegen. „Automatisch“ nimmt auf The Forge die Asset Library, sonst die Benutzerdaten.",
+        "auto": "Automatisch",
+        "data": "Benutzerdaten",
+        "forgevtt": "The Forge Asset Library",
+        "s3": "Amazon S3"
+      },
+      "ThumbRoot": {
+        "Name": "Ordner für Vorschauen",
+        "Hint": "Ordner für die Vorschaubilder. Leer bedeutet stagecraft/thumbs (auf The Forge modules/stagecraft/thumbs). Stagecraft legt darin nummerierte Unterordner an."
+      },
+      "StageTransition": {
+        "Name": "Stage-Übergang",
+        "Hint": "Wie die alte Stage beim Wechsel der neuen Platz macht, bei den Spielern und bei dir in der Spieler-Ansicht. Der Übergang beginnt, sobald die neue Stage samt Lichtern gezeichnet ist. Bei reduzierter Bewegung wird daraus kurzes Überblenden.",
+        "none": "Kein Übergang",
+        "fade": "Überblenden",
+        "dip": "Abblende über Schwarz",
+        "hardWipe": "Harte Wischblende",
+        "clock": "Uhrzeigerblende",
+        "softWipe": "Weiche Wischblende",
+        "iris": "Kreisblende"
+      },
+      "StageFit": {
+        "Name": "Anpassung des Stage-Bildes",
+        "Hint": "Wie das Stage-Bild den Bildschirm der Spieler ausfüllt. Auf der Stage-Szene können Spieler weder verschieben noch zoomen; bei geänderter Fenstergröße passt sich das Bild neu an.",
+        "cover": "Füllend (Ränder können abgeschnitten werden)",
+        "contain": "Vollständig (Balken bei abweichendem Seitenverhältnis)"
+      }
+    },
+    "Errors": {
+      "GMOnly": "Das kann nur ein Spielleiter.",
+      "NoStageRoot": "Es ist kein Stage-Ordner eingestellt. Bitte in den Einstellungen von Stagecraft wählen.",
+      "NoCardRoot": "Es ist kein Card-Ordner eingestellt. Wähle ihn in den Stagecraft-Einstellungen."
+    },
+    "Browser": {
+      "Control": "Stage-Browser",
+      "Title": "Stagecraft – Stages",
+      "Search": "Suche",
+      "SearchPlaceholder": "Suchen … #Tag /Variante",
+      "Count": "{shown} von {total} Locations",
+      "Rescan": "Neu einlesen",
+      "Scanning": "Wird eingelesen …",
+      "ScannedAt": "Zuletzt eingelesen: {date}",
+      "Truncated": "Das Einlesen wurde an einer Obergrenze abgebrochen; es fehlen Bilder.",
+      "FolderErrors": "{count} Ordner konnten nicht gelesen werden. Details in der Browser-Konsole.",
+      "NoIndex": "Noch kein Index. „Neu einlesen“ im Fenstermenü (⋮) liest den Stage-Ordner ein.",
+      "NoImages": "Der Stage-Ordner enthält keine Bilder.",
+      "Variants": "Varianten",
+      "VariantCount": "{count} Varianten",
+      "BaseVariant": "Standard",
+      "Rescanned": "{count} Bilder eingelesen.",
+      "SelectMode": "Auswählen",
+      "SelectModeEnd": "Auswahl beenden",
+      "SelectModeHint": "Auswahlmodus: Ein Klick wählt Kacheln aus, statt die Stage zu wechseln. Auch ohne Modus: Cmd/Strg+Klick wählt einzeln, Umschalt+Klick einen Bereich. Alt/Option+Klick öffnet die Tags des Bildes. Umschalt+Klick auf einen Varianten-Knopf zeigt sie groß, solange Umschalt gedrückt ist.",
+      "SelectTile": "{name} auswählen",
+      "SelectedCount": "{count} ausgewählt",
+      "SelectHint": "Kacheln anklicken, um sie auszuwählen.",
+      "SelectAll": "Alle auswählen",
+      "SelectAllHint": "Wählt alle sichtbaren Kacheln aus; eine Suche grenzt die Auswahl also ein.",
+      "ClearSelection": "Auswahl aufheben",
+      "ReviewNotice": "Beim Einlesen gab es etwas zu prüfen: {items}.",
+      "ReviewSuggestions": "Tag-Vorschläge ({count})",
+      "ReviewOrphans": "verwaiste Tags ({count})",
+      "Review": "Prüfen",
+      "CloseNotice": "Hinweis schließen",
+      "FilterHint": "Beim Tippen erscheinen passende Tags und Varianten; Enter übernimmt den markierten als Filter. #night + Enter setzt direkt einen Tag-Filter, /night + Enter einen Varianten-Filter.",
+      "NoRoot": "Es ist kein Stage-Ordner eingestellt. Bitte in den Einstellungen von Stagecraft wählen.",
+      "Info": "Filter und Index",
+      "RescanWhere": "Neu einlesen: Fenstermenü ⋮ oben rechts",
+      "ToggleOn": "{label}: an. {hint}",
+      "ToggleOff": "{label}: aus. {hint}",
+      "InfoSearch": "Suchen",
+      "InfoIndex": "Index",
+      "NotScanned": "Noch nicht eingelesen",
+      "InfoSearchItems": "Beim Tippen erscheinen passende Tags und Varianten; Enter nimmt den markierten als Filter.\n#nacht + Enter setzt direkt einen Tag-Filter.\n/nacht + Enter setzt direkt einen Varianten-Filter.\nDer Knopf „Suchbereiche“ legt fest, wo freier Text sucht."
+    },
+    "CardBrowser": {
+      "Title": "Stagecraft – Cards",
+      "Control": "Card-Browser",
+      "SearchPlaceholder": "Suchen … #Tag",
+      "FilterHint": "Beim Tippen erscheinen passende Tags; Enter übernimmt den markierten als Filter. #Tag + Enter setzt direkt einen Tag-Filter.",
+      "SelectModeHint": "Auswahlmodus: Ein Klick wählt Cards aus, statt sie zu zeigen. Auch ohne Modus: Cmd/Strg+Klick wählt einzeln, Umschalt+Klick einen Bereich. Alt/Option+Klick öffnet die Tags des Bildes. Umschalt+Klick auf einen Varianten-Knopf zeigt sie groß, solange Umschalt gedrückt ist.",
+      "Count": "{shown} von {total} Cards",
+      "NoRoot": "Es ist kein Card-Ordner eingestellt. Wähle ihn in den Stagecraft-Einstellungen.",
+      "NoIndex": "Noch kein Index. „Neu einlesen“ im Fenstermenü (⋮) liest den Card-Ordner ein.",
+      "NoImages": "Der Card-Ordner enthält keine Bilder.",
+      "Rescanned": "{count} Cards eingelesen.",
+      "Shown": "Besetzung",
+      "InsertBefore": "Nächste Card hier einfügen (vor {name})",
+      "InsertEnd": "Nächste Card am Ende einfügen",
+      "Position": "Position der Cards auf der laufenden Stage",
+      "PositionFor": "{position} – für „{stage}“",
+      "PositionNoStage": "Es läuft keine Stage aus dem Index.",
+      "HideAll": "Alle verdecken",
+      "EndDialog": "Dialog beenden",
+      "Speaking": "{name} spricht gerade",
+      "SetSpeaker": "Als Sprecher setzen",
+      "EndSpeaker": "Sprecher aufheben",
+      "TooMany": "Höchstens {max} Cards passen in die Besetzung. Entferne zuerst eine.",
+      "PositionDefault": "Standard",
+      "PositionOf": "Position der Cards auf „{stage}“",
+      "NoneShown": "Die Besetzung ist leer. Ein Klick auf eine Kachel zeigt eine Card, Ziehen hierher stellt sie verdeckt ein.",
+      "InfoSearchItems": "Beim Tippen erscheinen passende Tags; Enter nimmt den markierten als Filter.\n#tag + Enter setzt direkt einen Tag-Filter.\nDer Knopf „Suchbereiche“ legt fest, wo freier Text sucht."
+    },
+    "Cast": {
+      "RemoveAll": "Alle entfernen",
+      "RemoveAllHint": "Die Besetzung leeren, auch die verdeckten Cards. Sie bleiben unter „Zuletzt gezeigt“.",
+      "HideAllHint": "Alle Cards verdecken; sie bleiben in der Besetzung.",
+      "Show": "Aufdecken",
+      "Hide": "Verdecken",
+      "Remove": "Aus der Besetzung entfernen",
+      "AddHidden": "Verdeckt in die Besetzung",
+      "ShownHint": "{name} – gezeigt. Klick: verdecken",
+      "HiddenHint": "{name} – verdeckt. Klick: aufdecken",
+      "Hidden": "verdeckt",
+      "Full": "{count} Cards passten nicht mehr in die Besetzung (höchstens {max})."
+    },
+    "Draft": {
+      "Plan": "Planen",
+      "PlanHint": "Planungsmodus: Klicks ändern einen Entwurf, den die Spieler nicht sehen. „Zeigen“ zeigt ihn in einem Schritt; die Cards drehen sich dabei an ihrem Platz um. „Verwerfen“ beendet ihn.",
+      "Label": "Entwurf",
+      "Empty": "Klicke Cards an, um den Entwurf zu füllen. Die Spieler sehen davon nichts.",
+      "Show": "Zeigen",
+      "Discard": "Verwerfen",
+      "NotPlanning": "Der Planungsmodus ist nicht aktiv."
+    },
+    "Dialogs": {
+      "RemoveTag": "{tag} entfernen",
+      "Label": "Dialoge",
+      "Toggle": "Dialoge ({count})",
+      "NoneMatch": "Kein Dialog passt zum Filter.",
+      "ShowHint": "Klick: den Spielern zeigen",
+      "LoadHint": "Klick: in den Entwurf laden",
+      "MenuHint": "Rechtsklick: bearbeiten, Eigenschaften, löschen",
+      "StageOf": "Stage: {stage}",
+      "Edit": "Bearbeiten",
+      "Properties": "Dialog-Eigenschaften",
+      "PropertiesOf": "Eigenschaften von „{name}“",
+      "New": "Neuer Dialog",
+      "Delete": "Löschen",
+      "DeleteTitle": "Dialog löschen?",
+      "DeleteConfirm": "Den Dialog „{name}“ löschen?",
+      "StripLabel": "{label}: {name}",
+      "SaveAs": "Als Dialog speichern",
+      "SaveAsNew": "Als neuen Dialog speichern",
+      "SaveBack": "Speichern",
+      "SaveBackHint": "Den Entwurf in „{name}“ speichern",
+      "Saved": "Dialog „{name}“ gespeichert.",
+      "Name": "Name",
+      "NamePlaceholder": "zum Beispiel Pilger am Brunnen",
+      "Cards": "Cards",
+      "CardsHint": "Die Cards änderst du im Entwurf: „Bearbeiten“ lädt den Dialog dorthin, „Speichern“ in der Leiste „Entwurf“ übernimmt die Änderungen.",
+      "Speaker": "Sprecher",
+      "Missing": "fehlt",
+      "Stage": "Stage",
+      "StageNone": "Keine – die laufende Stage bleibt",
+      "StageCurrent": "Laufende Stage: {stage}",
+      "StageHint": "Hat der Dialog eine Stage, wechselt sie beim Zeigen mit, samt Licht-Preset.",
+      "Tags": "Tags",
+      "TagsHint": "Enter oder „Hinzufügen“ übernimmt den Tag, Kommas trennen mehrere. Der Card-Browser filtert die Dialoge nach Tags wie die Cards.",
+      "SaveChanges": "Änderungen speichern",
+      "Create": "Dialog speichern",
+      "Unknown": "Es gibt keinen Dialog „{ref}“.",
+      "NoCardIndex": "In diesem Browser fehlt der Card-Index. „Neu einlesen“ im Fenstermenü (⋮) des Card-Browsers liest den Card-Ordner ein.",
+      "NoCards": "Keine Card des Dialogs „{name}“ ist mehr im Index.",
+      "MissingCards": "„{name}“: Diese Cards sind nicht mehr im Index und werden ausgelassen: {cards}",
+      "MissingStage": "„{name}“: Die Stage {stage} ist nicht im Index; die laufende Stage bleibt.",
+      "NameRequired": "Der Dialog braucht einen Namen.",
+      "CardsRequired": "Ein Dialog braucht mindestens eine Card.",
+      "TooMany": "Höchstens {max} Dialoge lassen sich speichern."
+    },
+    "Sidebar": {
+      "Collapse": "Sidebar einklappen",
+      "CollapseOnStageHint": "Bei jedem Stage-Wechsel die Sidebar der Spieler einklappen, damit die Stage frei liegt. Bei dir nur in der Spieler-Ansicht.",
+      "CollapseOnCardsHint": "Vor der ersten Card die Sidebar der Spieler einklappen; die Cards erscheinen erst danach. Im Planungsmodus vor dem Zeigen des Entwurfs. Bei dir nur in der Spieler-Ansicht."
+    },
+    "CardPosition": {
+      "top": "Oben mittig",
+      "bottom": "Unten mittig (über der Hotbar)",
+      "center": "Zentriert",
+      "left": "Links, von oben nach unten",
+      "right": "Rechts, von oben nach unten"
+    },
+    "Thumbs": {
+      "Label": "Vorschauen",
+      "Progress": "{done} von {total}",
+      "Created": "{count} Vorschaubilder erzeugt.",
+      "SomeFailed": "{count} Vorschaubilder konnten nicht erzeugt werden. Details in der Browser-Konsole.",
+      "Failed": "Vorschaubilder konnten nicht erzeugt werden: {message}",
+      "UploadFailed": "Das Hochladen in den Ordner für Vorschauen ist fehlgeschlagen."
+    },
+    "ThumbCache": {
+      "Menu": {
+        "Name": "Vorschau-Cache",
+        "Label": "Vorschau-Cache verwalten",
+        "Hint": "Status der Vorschaubilder, fehlende erzeugen, alle neu erzeugen und verwaiste Dateien auflisten."
+      },
+      "Title": "Stagecraft – Vorschau-Cache",
+      "Location": "Speicherort",
+      "Present": "Vorhanden",
+      "OfTotal": "{count} von {total}",
+      "Missing": "Fehlend",
+      "Failed": "Nicht erzeugbar",
+      "Orphaned": "Verwaist",
+      "NoIndex": "Noch kein Index. Erst im Fenstermenü (⋮) des Stage-Browsers „Neu einlesen“ wählen, dann lassen sich Vorschauen zuordnen.",
+      "Reading": "Der Ordner für Vorschauen wird gelesen …",
+      "Unavailable": "Das Hochladen in den Ordner für Vorschauen ist fehlgeschlagen. Die Kacheln zeigen deshalb die Originale. Speicher und Ordner in den Einstellungen prüfen.",
+      "CreateMissing": "Fehlende erzeugen",
+      "Regenerate": "Alle neu erzeugen",
+      "RegenerateHint": "„Alle neu erzeugen“ legt einen neuen nummerierten Unterordner an. Foundry kann keine Dateien löschen; der bisherige Ordner bleibt liegen und lässt sich danach von Hand löschen.",
+      "RegenerateTitle": "Alle Vorschauen neu erzeugen?",
+      "RegenerateConfirm": "Alle {count} Vorschaubilder werden im neuen Unterordner {next} neu erzeugt. Der bisherige Ordner {folder} wird nicht mehr verwendet.",
+      "ShowOrphaned": "Verwaiste auflisten ({count})",
+      "OrphanedHint": "Diese Dateien gehören zu keinem Bild mehr, etwa weil es umbenannt oder gelöscht wurde. Sie lassen sich von Hand löschen.",
+      "ShowOldFolders": "Nicht mehr verwendete Ordner ({count})",
+      "OldFolders": "Nicht mehr verwendete Ordner",
+      "OldFoldersHint": "Frühere Unterordner aus „Alle neu erzeugen“. Sie lassen sich samt Inhalt von Hand löschen.",
+      "ShowFailed": "Nicht erzeugbare Bilder ({count})",
+      "FailedHint": "Für diese Bilder ließ sich keine Vorschau erzeugen, Details in der Browser-Konsole. Ihre Kacheln zeigen das Original. „Fehlende erzeugen“ versucht es erneut.",
+      "Copy": "Pfade kopieren",
+      "Copied": "Kopiert",
+      "CopyFailed": "Kopieren fehlgeschlagen"
+    },
+    "Tags": {
+      "Edit": "Tags bearbeiten",
+      "TitleOne": "Tags: {name}",
+      "TitleMany": "Tags: {count} Locations",
+      "NothingSelected": "Die ausgewählten Locations gibt es im Index nicht mehr.",
+      "Variants": "Varianten",
+      "Current": "Tags",
+      "None": "Keine Tags.",
+      "WillRemove": "wird entfernt",
+      "WillAdd": "neu",
+      "WillAddAll": "wird für alle {total} gesetzt",
+      "ApplyToAll": "Für alle",
+      "Remove": "{tag} entfernen",
+      "Undo": "Entfernen von {tag} rückgängig machen",
+      "Add": "Tag hinzufügen",
+      "AddButton": "Hinzufügen",
+      "AddHint": "Enter fügt hinzu, Kommas trennen mehrere. Präfixe: Session:, Scene:, Plot:, NPC:, Faction:, Location:.",
+      "Save": "Speichern",
+      "Saved": "Tags von {count} Dateien geändert.",
+      "TitleManyCards": "Tags: {count} Cards",
+      "Known": "Vorhandene Tags"
+    },
+    "Filter": {
+      "Suggestions": "Vorschläge",
+      "Scopes": "Suchbereiche",
+      "ScopesLegend": "Freitext sucht in",
+      "Scope": {
+        "name": "Name",
+        "variants": "Varianten",
+        "tags": "Tags",
+        "folders": "Ordner"
+      },
+      "Type": {
+        "tag": "Tag",
+        "variant": "Variante"
+      },
+      "Active": "Aktive Filter",
+      "Pin": "{value} anheften (beim Öffnen gesetzt)",
+      "Unpin": "{value} nicht mehr anheften",
+      "Remove": "Filter {value} entfernen"
+    },
+    "StageScene": {
+      "Menu": {
+        "Name": "Stage-Szene",
+        "Label": "Stage-Szene wählen",
+        "Hint": "Die Szene, die die Stages zeigt. Stagecraft setzt bei jedem Wechsel ihr Hintergrundbild und ihre Größe."
+      },
+      "Title": "Stagecraft – Stage-Szene",
+      "DefaultName": "Stagecraft – Stage",
+      "Hint": "Bei jedem Wechsel setzt Stagecraft Hintergrundbild, Breite und Höhe dieser Szene und entfernt ihren Rand (Padding). Alles andere in der Szene bleibt, wie es ist.",
+      "Current": "Aktuelle Stage-Szene:",
+      "Active": "aktiv",
+      "Inactive": "nicht aktiv",
+      "None": "Noch keine Stage-Szene gewählt. Wähle eine Szene oder lege eine neue an.",
+      "Label": "Stage-Szene",
+      "NoneOption": "– keine –",
+      "Create": "Neue Stage-Szene anlegen",
+      "Save": "Speichern",
+      "Saved": "Stage-Szene gespeichert.",
+      "Created": "Stage-Szene „{name}“ angelegt."
+    },
+    "ViewLock": {
+      "PlayerView": "Spieleransicht: die Stage-Szene angepasst und gesperrt sehen wie die Spieler"
+    },
+    "LockView": {
+      "Heading": "Lock View",
+      "Active": "Lock View ist aktiv. Stagecraft sperrt die Ansicht der Stage-Szene selbst; empfohlen ist, Lock View zu deaktivieren.",
+      "ConflictsIntro": "Diese Lock-View-Einstellungen der Stage-Szene kollidieren mit Stagecraft:",
+      "NoConflicts": "Lock View hat auf der Stage-Szene keine Ansichtseinstellungen.",
+      "Conflict": {
+        "pan": "Verschieben gesperrt",
+        "zoom": "Zoom gesperrt",
+        "boundingBox": "Begrenzungsrahmen",
+        "autoscale": "Autoskalierung",
+        "forceInitialView": "Erzwungene Startansicht"
+      },
+      "Reset": "Auf der Stage-Szene zurücksetzen",
+      "ResetTitle": "Lock-View-Einstellungen zurücksetzen",
+      "ResetConfirm": "Sperren, Autoskalierung und erzwungene Startansicht von Lock View aus der Szene „{name}“ entfernen? Andere Szenen bleiben, wie sie sind.",
+      "ResetDone": "Lock-View-Einstellungen der Stage-Szene entfernt.",
+      "Notice": "Lock View sperrt die Stage-Szene und kann mit der Ansichtssperre von Stagecraft kollidieren.",
+      "Check": "Prüfen"
+    },
+    "Keybindings": {
+      "EndDialog": {
+        "Name": "Dialog beenden",
+        "Hint": "Die Besetzung leeren: Alle Cards verschwinden, auch die verdeckten."
+      },
+      "EndSpeaker": {
+        "Name": "Sprecher aufheben",
+        "Hint": "Die sprechende Card spricht nicht mehr; die Cards bleiben stehen."
+      },
+      "ShowDraft": {
+        "Name": "Entwurf zeigen",
+        "Hint": "Im Planungsmodus: den Entwurf den Spielern zeigen; die Cards drehen sich an ihrem Platz um."
+      }
+    },
+    "CardsOnStageSwitch": {
+      "Title": "Dialog beenden?",
+      "Text": "Es werden {count} Card(s) gezeigt. Den Dialog mit dem Wechsel beenden?",
+      "End": "Dialog beenden und wechseln",
+      "Keep": "Cards behalten und wechseln"
+    },
+    "Lights": {
+      "Save": "Preset speichern",
+      "SaveFor": "Die Lichter und Wände auf der Stage als Preset von „{file}“ speichern. Ohne beides wird das Preset gelöscht.",
+      "Unsaved": "Nicht gespeichert: Die Lichter und Wände auf der Stage weichen vom Preset von „{file}“ ab.",
+      "NoStage": "Es läuft keine Stage aus dem Index, deshalb lassen sich ihre Lichter und Wände nicht speichern.",
+      "Saved": "{lights} Licht(er) und {walls} Wand/Wände als Preset von „{file}“ gespeichert.",
+      "Removed": "„{file}“ hat keine Lichter und Wände mehr; das Preset ist gelöscht.",
+      "Nothing": "„{file}“ hat weder Lichter, Wände noch ein Preset; es gibt nichts zu speichern.",
+      "TooMany": "Ein Preset enthält höchstens {lights} Lichter und {walls} Wände.",
+      "Preset": "Licht-Preset",
+      "PresetVariants": "Licht-Preset: {variants}",
+      "WarnTitle": "Preset nicht gespeichert",
+      "WarnChanged": "Die Lichter und Wände auf „{file}“ weichen vom gespeicherten Preset ab. Ein Wechsel ersetzt sie.",
+      "WarnNew": "Die Lichter und Wände auf „{file}“ sind noch nicht gespeichert. Ein Wechsel entfernt sie.",
+      "WarnUnindexed": "Die Lichter und Wände auf der Stage lassen sich nicht speichern, weil ihr Bild nicht im Index ist. Ein Wechsel entfernt sie.",
+      "SaveAndSwitch": "Speichern und wechseln",
+      "DiscardAndSwitch": "Verwerfen und wechseln",
+      "Cancel": "Abbrechen"
+    },
+    "Stage": {
+      "NoScene": "Es ist keine Stage-Szene eingerichtet, Stages lassen sich noch nicht zeigen.",
+      "Setup": "Einrichten",
+      "Inactive": "Die Stage-Szene „{name}“ ist nicht aktiv. Ein Klick tauscht ihr Bild; Spieler sehen es, sobald sie aktiv ist.",
+      "Activate": "Aktivieren",
+      "DefaultNavName": "Stage",
+      "OnStage": "Gerade auf der Stage",
+      "RenameLabel": "{name} – Stage-Name und Balkenfarbe",
+      "NameTooltip": "Stage-Name, den Spieler sehen. Datei: {file}. Klicken, um Name oder Balkenfarbe zu ändern.",
+      "NameTooltipUnset": "Klicken, um einen Stage-Namen für Spieler (sonst „Stage“) oder die Balkenfarbe festzulegen.",
+      "RenameTitle": "Stage-Einstellungen",
+      "CardPositionLabel": "Position der Cards",
+      "CardPositionHint": "Wo die Cards bei den Spielern stehen, solange diese Location auf der Stage ist, für alle ihre Varianten.",
+      "CardPositionDefault": "Standard ({position})",
+      "NameLabel": "Name in der Szenennavigation",
+      "NameHint": "Spieler sehen diesen Namen statt „Stage“, solange diese Location gezeigt wird. Leer lassen für „Stage“. Datei: {file}",
+      "NameSave": "Speichern",
+      "ChangeName": "Namen ändern",
+      "Rename": "Umbenennen",
+      "RenameManyTitle": "Stage-Name für {count} Locations",
+      "NameManyHint": "Spieler sehen diesen Namen statt „Stage“, solange eine dieser {count} Locations gezeigt wird. Leer lassen für „Stage“.",
+      "ColorLegend": "Balkenfarbe pro Variante",
+      "ColorHint": "Füllt die Balken, wenn das ganze Bild gezeigt wird (Einstellung „Vollständig“). Leer: die abgedunkelte mittlere Farbe der Bildränder.",
+      "ColorAuto": "automatisch",
+      "Errors": {
+        "NoScene": "Es ist keine Stage-Szene eingerichtet. Wähle oder erstelle sie in den Stagecraft-Einstellungen.",
+        "NoLevel": "Die Stage-Szene hat keine Ebene (Level), auf der das Bild erscheinen kann.",
+        "NotIndexed": "Dieses Bild ist nicht im Stage-Index. Bitte neu einlesen.",
+        "Unreadable": "Das Bild konnte nicht gelesen werden: {src}"
+      }
+    },
+    "TagReview": {
+      "Menu": {
+        "Name": "Tags prüfen",
+        "Label": "Tags prüfen",
+        "Hint": "Tag-Vorschläge aus Datei- und Ordnernamen sowie Tags, deren Datei umbenannt, verschoben oder gelöscht wurde."
+      },
+      "Title": "Stagecraft – Tags prüfen",
+      "NoIndex": "Noch kein Index. Bitte zuerst im Fenstermenü (⋮) des Stage-Browsers „Neu einlesen“ wählen.",
+      "Suggestions": "Vorschläge ({count})",
+      "SuggestionsHint": "Aus dem ersten Namensteil vor „ - “ (als Location:…) und aus Ordnernamen. Hinzugefügt werden nur angehakte Tags; in der aufgeklappten Dateiliste lassen sich einzelne Dateien abwählen.",
+      "Files": "Dateien ({count})",
+      "Dismiss": "Ablehnen",
+      "DismissTag": "{tag} ablehnen",
+      "PickAll": "Alle anhaken",
+      "PickNone": "Keine anhaken",
+      "Chosen": "{tags} Tags für {files} Dateien angehakt",
+      "ApplySuggestions": "Angehakte hinzufügen",
+      "Applied": "Tags zu {count} Dateien hinzugefügt.",
+      "NoSuggestions": "Keine offenen Vorschläge.",
+      "DismissedCount": "Abgelehnte Vorschläge: {count}",
+      "ClearDismissed": "Wieder vorschlagen",
+      "Orphans": "Verwaiste Tags ({count})",
+      "OrphansHint": "Tags an Pfaden, die das letzte Einlesen nicht gefunden hat, etwa nach dem Umbenennen oder Verschieben einer Datei.",
+      "Incomplete": "Beim letzten Einlesen fehlten Ordner, oder es endete an einer Grenze. Verwaiste Tags erscheinen erst nach einem vollständigen Einlesen.",
+      "NoOrphans": "Keine verwaisten Tags.",
+      "Moves": "Neuer Ort gefunden ({count})",
+      "MoreMoves": "… und {count} weitere; sie werden mit übertragen.",
+      "ApplyMoves": "Angehakte übertragen",
+      "Moved": "Tags von {count} Dateien übertragen.",
+      "Lost": "Ohne Zuordnung ({count})",
+      "MoreLost": "… und {count} weitere",
+      "Remove": "Entfernen",
+      "RemoveOrphan": "Tags von {file} entfernen",
+      "RemoveAll": "Alle entfernen ({count})",
+      "RemoveAllTitle": "Verwaiste Tags entfernen",
+      "RemoveAllConfirm": "Die Tags aller {count} Dateien ohne Zuordnung entfernen? Das lässt sich nicht rückgängig machen; ein Export vorher sichert eine Kopie.",
+      "Removed": "Tags von {count} Dateien entfernt.",
+      "Reason": {
+        "NotFound": "Keine Datei dieses Namens im Index",
+        "Ambiguous": "Dateiname kommt mehrfach vor"
+      },
+      "IncompleteCards": "Der Card-Index ist noch nicht eingelesen, Card-Tags sähen sonst verwaist aus. Öffne den Card-Browser und wähle im Fenstermenü (⋮) „Neu einlesen“; danach erscheinen verwaiste Tags."
+    },
+    "TagTransfer": {
+      "Menu": {
+        "Name": "Tags exportieren / importieren",
+        "Label": "Tags exportieren / importieren",
+        "Hint": "Alle Tags als JSON-Datei sichern, extern bearbeiten und wieder einlesen, auch für Massenänderungen oder den Eagle-Import."
+      },
+      "Title": "Stagecraft – Tags exportieren / importieren",
+      "Export": "Exportieren",
+      "ExportHint": "{count} Dateien haben Tags. Der Export enthält Pfad und Tags jeder Datei.",
+      "ExportButton": "Als JSON herunterladen",
+      "Import": "Importieren",
+      "NoIndex": "Noch kein Index. Erst im Fenstermenü (⋮) des Stage-Browsers „Neu einlesen“ wählen; der Import ordnet die Einträge den eingelesenen Dateien zu.",
+      "ImportHint": "Zugeordnet wird über den Pfad, sonst über den eindeutigen Dateinamen. Vor dem Übernehmen zeigt eine Vorschau alle Änderungen; erst „Übernehmen“ speichert.",
+      "Mode": "Vorhandene Tags",
+      "ModeReplace": "Ersetzen: Die Datei hat danach genau die importierten Tags",
+      "ModeMerge": "Ergänzen: Importierte Tags kommen hinzu, nichts wird entfernt",
+      "File": "Datei (JSON)",
+      "Preview": "Vorschau für {file}",
+      "Entries": "{count} Einträge in der Datei",
+      "Changed": "{count} Dateien ändern sich",
+      "Unchanged": "{count} Dateien bleiben gleich",
+      "Unmatched": "{count} Einträge ohne Zuordnung",
+      "ChangesList": "Änderungen ({count})",
+      "UnmatchedList": "Ohne Zuordnung ({count})",
+      "ErrorsList": "Hinweise zur Datei ({count})",
+      "More": "… und {count} weitere",
+      "Discard": "Verwerfen",
+      "Apply": "Übernehmen ({count})",
+      "Applied": "Tags von {count} Dateien übernommen.",
+      "Reason": {
+        "NotFound": "Keine Datei mit diesem Pfad oder Namen im Index",
+        "Ambiguous": "Dateiname kommt mehrfach vor; bitte mit Pfad angeben"
+      },
+      "Error": {
+        "TooLarge": "Die Datei ist größer als 5 MB.",
+        "NotJson": "Die Datei ist kein gültiges JSON.",
+        "NotAnObject": "Die Datei hat nicht das erwartete Format.",
+        "WrongFormat": "Das ist keine Stagecraft-Tag-Datei (format fehlt oder stimmt nicht).",
+        "UnsupportedVersion": "Diese Version des Tag-Formats wird nicht unterstützt.",
+        "TagsNotAnObject": "Der Eintrag „tags“ fehlt oder ist kein Objekt.",
+        "TooManyEntries": "Die Datei hat zu viele Einträge.",
+        "InvalidKey": "Ungültiger oder zu langer Pfad; Eintrag übersprungen.",
+        "TagsNotAnArray": "Tags sind keine Liste; Eintrag übersprungen.",
+        "TooManyTags": "Zu viele Tags; Eintrag übersprungen.",
+        "InvalidTagsDropped": "Ungültige Tags wurden weggelassen."
+      }
+    },
+    "History": {
+      "Label": "Zuletzt gezeigt",
+      "None": "Noch hat nichts die Bühne verlassen.",
+      "RestoreHint": "Klick: wieder zeigen",
+      "LoadHint": "Klick: in den Entwurf laden",
+      "Unknown": "Diesen Eintrag gibt es nicht mehr."
+    }
+  }
+}

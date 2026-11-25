@@ -1,0 +1,93 @@
+{{!-- Shared by the stage and the card browser; ids carry the browser's prefix, so both can be open.
+      One row: the search field with the count inside it, search scopes, "i" (filter help and last scan), then the
+      browser's own controls (card position menu, "Save preset"), its sidebar switch and "Select". "Rescan" is in
+      the window menu (⋮, MediaBrowser#_getHeaderControls); while it runs, the count says so. --}}
+<header class="stage-browser-header">
+  <search class="stage-browser-search">
+    <label class="stagecraft-visually-hidden" for="{{idPrefix}}-search">{{localize "STAGECRAFT.Browser.Search"}}</label>
+    <div class="stage-filter-field">
+      <input type="search" id="{{idPrefix}}-search" value="{{query}}" autocomplete="off" autocorrect="off"
+             autocapitalize="none" spellcheck="false" enterkeyhint="done"
+             role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="{{idPrefix}}-suggestions"
+             aria-describedby="{{idPrefix}}-count {{idPrefix}}-search-hint"
+             placeholder="{{searchPlaceholder}}">
+      <p class="stage-browser-status" id="{{idPrefix}}-count" data-role="count" role="status" aria-live="polite"></p>
+      <ul class="stage-filter-suggestions" id="{{idPrefix}}-suggestions" role="listbox"
+          aria-label="{{localize "STAGECRAFT.Filter.Suggestions"}}" hidden></ul>
+    </div>
+    <button type="button" class="icon fa-solid fa-sliders" popovertarget="{{idPrefix}}-scopes"
+            aria-label="{{localize "STAGECRAFT.Filter.Scopes"}}" data-tooltip="STAGECRAFT.Filter.Scopes"></button>
+    <div class="stage-filter-scopes" id="{{idPrefix}}-scopes" popover>
+      <fieldset>
+        <legend>{{localize "STAGECRAFT.Filter.ScopesLegend"}}</legend>
+        {{#each scopes}}
+        <label>
+          <input type="checkbox" name="scope" value="{{key}}" {{#if checked}}checked{{/if}}> {{label}}
+        </label>
+        {{/each}}
+      </fieldset>
+    </div>
+    {{!-- Help on hover or focus; the same text reaches screen readers through the input's description. --}}
+    <button type="button" class="icon fa-solid fa-circle-info stage-browser-info"
+            aria-label="{{localize "STAGECRAFT.Browser.Info"}}" data-tooltip-html="{{infoTooltip}}"
+            data-tooltip-class="stagecraft-info-tooltip" data-tooltip-direction="DOWN"></button>
+    <p class="stagecraft-visually-hidden" id="{{idPrefix}}-search-hint">{{filterHint}}</p>
+  </search>
+  <div class="stage-browser-tools">
+    {{#each headerActions}}
+    <button type="button" data-action="{{action}}" {{#if disabled}}disabled{{/if}}
+            {{#if pressed}}aria-pressed="{{pressed}}"{{/if}} {{#if hint}}data-tooltip-text="{{localize hint}}"{{/if}}>
+      <i class="{{icon}}" aria-hidden="true"></i> {{localize label}}
+    </button>
+    {{/each}}
+    {{#if positionPicker}}
+    {{!-- Where the cards stand on the stage now shown: a small menu; the button shows the current position.
+          State set by the browser (CardBrowser#markPosition), no re-render on change. --}}
+    <button type="button" class="card-position-toggle" popovertarget="{{idPrefix}}-positions"
+            aria-label="{{positionPicker.label}}" data-tooltip-text="{{positionPicker.label}}">
+      <i class="fa-solid fa-arrow-up" data-role="position-icon" aria-hidden="true"></i>
+      <i class="fa-solid fa-caret-down" aria-hidden="true"></i>
+    </button>
+    <div class="card-position-menu" id="{{idPrefix}}-positions" popover role="group"
+         aria-label="{{positionPicker.label}}">
+      <p class="card-position-menu-title" data-role="position-title">{{positionPicker.label}}</p>
+      {{#each positionPicker.options}}
+      <button type="button" data-action="setStageCardPosition" data-position="{{value}}" aria-pressed="false">
+        <i class="{{icon}}" aria-hidden="true"></i>
+        <span class="card-position-menu-label">{{label}}</span>
+        <span class="card-position-menu-default" hidden>{{../positionPicker.defaultLabel}}</span>
+        <i class="fa-solid fa-check card-position-menu-check" aria-hidden="true"></i>
+      </button>
+      {{/each}}
+    </div>
+    {{/if}}
+    {{#each headerToggles}}
+    {{!-- A world setting of this browser as an on/off switch; the label stays, the state is aria-pressed. --}}
+    <button type="button" class="icon {{icon}} stage-browser-toggle" data-action="toggleHeaderSetting"
+            data-setting="{{setting}}" aria-pressed="{{#if checked}}true{{else}}false{{/if}}"
+            aria-label="{{localize label}}" data-tooltip-text="{{tooltip}}"></button>
+    {{/each}}
+    {{!-- The label names the action and changes with the mode (no aria-pressed, whose label must stay fixed).
+          Both labels are rendered; CSS shows the one for the current mode, so toggling needs no re-render. --}}
+    <button type="button" class="stage-select-mode" data-action="toggleSelecting"
+            data-tooltip-text="{{selectModeHint}}">
+      <span class="stage-select-mode-start">
+        <i class="fa-solid fa-list-check" aria-hidden="true"></i> {{localize "STAGECRAFT.Browser.SelectMode"}}
+      </span>
+      <span class="stage-select-mode-end">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i> {{localize "STAGECRAFT.Browser.SelectModeEnd"}}
+      </span>
+    </button>
+  </div>
+  <div class="stage-browser-thumbs" data-role="thumbs" hidden>
+    <label for="{{idPrefix}}-thumb-progress">{{localize "STAGECRAFT.Thumbs.Label"}}</label>
+    <progress id="{{idPrefix}}-thumb-progress" max="1" value="0"></progress>
+    <span data-role="thumbs-count"></span>
+  </div>
+  {{#if truncated}}
+  <p class="stage-browser-warning">{{localize "STAGECRAFT.Browser.Truncated"}}</p>
+  {{/if}}
+  {{#if errorCount}}
+  <p class="stage-browser-warning">{{localize "STAGECRAFT.Browser.FolderErrors" count=errorCount}}</p>
+  {{/if}}
+</header>

@@ -1,0 +1,74 @@
+<div class="stage-browser-body">
+  {{#unless hasRoot}}
+  <p class="stage-browser-empty">{{noRoot}}</p>
+  {{else unless hasIndex}}
+  <p class="stage-browser-empty">{{noIndex}}</p>
+  {{else unless total}}
+  <p class="stage-browser-empty">{{noImages}}</p>
+  {{else}}
+  {{!-- Same tile structure as the stage browser (shared styles, selection and variants). --}}
+  <ul class="stage-browser-grid">
+    {{#each tiles}}
+    {{!-- The whole tile can be dragged onto the strip (it joins the cast hidden), with or without its image. --}}
+    <li class="stage-tile{{#if deferred}} deferred{{/if}}{{#if selected}} selected{{/if}}" data-key="{{key}}"
+        draggable="true">
+      <button type="button" class="stage-tile-preview" data-action="selectCard" data-path="{{original}}"
+              aria-label="{{name}}">
+        <span class="stage-tile-media" data-original="{{original}}">
+          <i class="stage-tile-dummy fa-regular fa-id-badge" aria-hidden="true"></i>
+          {{#if src}}
+          <img src="{{src}}" alt="" width="320" height="480" loading="lazy" decoding="async">
+          {{/if}}
+          {{#if hasOverlay}}
+          <span class="stage-tile-footer" aria-hidden="true">
+            <span class="stage-tile-tags">
+              {{#each tags}}
+              <span class="stage-tile-tag" data-kind="{{kind}}" data-tooltip-text="{{tag}}">{{text}}</span>
+              {{/each}}
+              {{#if tags.length}}
+              {{!-- Shown with the count once the labels are fitted into one line (scripts/apps/tile-tag-fit.mjs). --}}
+              <span class="stage-tile-chip stage-tile-more-chip" hidden>
+                <i class="fa-solid fa-tags"></i> <span class="stage-tile-more-count"></span>
+              </span>
+              {{/if}}
+            </span>
+            {{#if hasVariants}}
+            <span class="stage-tile-chip stage-tile-badge" data-tooltip-text="{{variantCount}}">
+              <i class="fa-solid fa-layer-group"></i> {{variants.length}}
+            </span>
+            {{/if}}
+          </span>
+          {{/if}}
+        </span>
+      </button>
+      {{!-- Checkbox and full name on hover, variant buttons below; the name is decoration, the button's aria-label
+            carries it. --}}
+      <div class="stage-tile-top">
+        <input type="checkbox" class="stage-tile-check" data-action="toggleTile" aria-label="{{selectLabel}}"
+               {{#if selected}}checked{{/if}}>
+        <span class="stage-tile-name stage-tile-name-static" aria-hidden="true">{{name}}</span>
+        {{!-- Only on a card the players see (class "current" on the tile, see CardBrowser#markShown). --}}
+        <button type="button" class="stage-tile-speaking" data-action="toggleSpeaking" aria-pressed="false"
+                aria-label="{{speakingLabel}}" data-tooltip-text="{{speakingLabel}}">
+          <i class="fa-solid fa-comment-dots" aria-hidden="true"></i>
+        </button>
+        {{!-- Instead of the speaking button on a card hidden in the cast (class "covered"). --}}
+        <span class="stage-tile-covered" data-tooltip="STAGECRAFT.Cast.Hidden" aria-hidden="true">
+          <i class="fa-solid fa-eye-slash"></i>
+        </span>
+        {{#if hasVariants}}
+        <ul class="stage-tile-variants" aria-label="{{localize "STAGECRAFT.Browser.Variants"}}">
+          {{#each variants}}
+          <li>
+            <button type="button" data-action="selectCard" data-path="{{path}}"
+                    {{#if isBase}}class="base"{{/if}}>{{label}}</button>
+          </li>
+          {{/each}}
+        </ul>
+        {{/if}}
+      </div>
+    </li>
+    {{/each}}
+  </ul>
+  {{/unless}}
+</div>

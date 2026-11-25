@@ -1,0 +1,532 @@
+{
+  "STAGECRAFT": {
+    "Settings": {
+      "StageSource": {
+        "Name": "Stage source",
+        "Hint": "Where the stage folder lives. Choose \"The Forge Asset Library\" on The Forge.",
+        "data": "User data",
+        "forgevtt": "The Forge Asset Library",
+        "public": "Core data",
+        "s3": "Amazon S3"
+      },
+      "StageRoot": {
+        "Name": "Stage folder",
+        "Hint": "Folder with the stage images. All subfolders are included; folders do not affect grouping."
+      },
+      "CardSource": {
+        "Name": "Card source",
+        "Hint": "Where the card folder lives. Choose \"The Forge Asset Library\" on The Forge."
+      },
+      "CardRoot": {
+        "Name": "Card folder",
+        "Hint": "Folder with the NPC cards (images in 2:3). Subfolders are read as well."
+      },
+      "CardSize": {
+        "Name": "Card size",
+        "Hint": "Height of a card shown to the players, as a share of the window height. With many cards they all become smaller, so they fit side by side."
+      },
+      "CardTransition": {
+        "Name": "Card entrance",
+        "Hint": "How a card appears for the players and leaves again. With reduced motion set in the system, every option becomes a short fade.",
+        "a2b1": "At its place, the others move along (fade with a slight zoom)",
+        "a1b1": "Place opens, card steps forward (fade with a slight zoom)",
+        "a1b2": "Place opens, card turns over like a playing card",
+        "a1b3": "Place opens, card comes in from above",
+        "a1b4": "Place opens, card fades in",
+        "simple": "Simple: fade, the others jump to their place"
+      },
+      "CardsOnStageSwitch": {
+        "Name": "Cards on stage switch",
+        "Hint": "What happens to the shown cards when you switch the stage: they stay, the dialog ends (the cast is emptied), or the stage browser asks each time.",
+        "keep": "Keep the cards",
+        "end": "End Dialog (empty the cast)",
+        "ask": "Ask"
+      },
+      "CardPosition": {
+        "Name": "Card position",
+        "Hint": "Where the cards stand for the players on stages without a position of their own (set per stage in its settings: click the stage name in the stage browser)."
+      },
+      "TagOrder": {
+        "Name": "Tag order",
+        "Hint": "Order of the tag prefixes on tiles and in the tag editor, separated by commas. Prefixes not listed follow after them, tags without a prefix come last. A tile shows as many tags as fit into one line; the rest appear on hover."
+      },
+      "VariantPattern": {
+        "Name": "Variant pattern",
+        "Hint": "How variants are recognised in the file names of stages and cards. A template with {name} and {variant}, e.g. {name} ({variant}), or a regular expression between slashes with the named groups name and variant."
+      },
+      "ThumbSource": {
+        "Name": "Thumbnail storage",
+        "Hint": "Where preview images of the stages are stored. “Automatic” uses The Forge Asset Library on The Forge and the user data folder otherwise.",
+        "auto": "Automatic",
+        "data": "User data",
+        "forgevtt": "The Forge Asset Library",
+        "s3": "Amazon S3"
+      },
+      "ThumbRoot": {
+        "Name": "Thumbnail folder",
+        "Hint": "Folder for the preview images. Empty means stagecraft/thumbs (on The Forge modules/stagecraft/thumbs). Stagecraft creates numbered subfolders in it."
+      },
+      "StageTransition": {
+        "Name": "Stage transition",
+        "Hint": "How the previous stage makes way for the next one, for the players and for you in the player view. The transition starts once the new stage is drawn with its lights. With reduced motion it becomes a short fade.",
+        "none": "No transition",
+        "fade": "Cross-fade",
+        "dip": "Dip to black",
+        "hardWipe": "Hard wipe",
+        "clock": "Clock wipe",
+        "softWipe": "Soft wipe",
+        "iris": "Iris"
+      },
+      "StageFit": {
+        "Name": "Stage image fit",
+        "Hint": "How the stage image fits the players' screen. Players cannot pan or zoom on the stage scene; resizing the window fits the image again.",
+        "cover": "Fill the screen (edges may be cut off)",
+        "contain": "Show the whole image (bars where the ratio differs)"
+      }
+    },
+    "Errors": {
+      "GMOnly": "Only a Gamemaster can do this.",
+      "NoStageRoot": "No stage folder is set. Choose one in the Stagecraft settings.",
+      "NoCardRoot": "No card folder is set. Choose one in the Stagecraft settings."
+    },
+    "Browser": {
+      "Control": "Stage browser",
+      "Title": "Stagecraft – Stages",
+      "Search": "Search",
+      "SearchPlaceholder": "Search… #tag /variant",
+      "Count": "{shown} of {total} locations",
+      "Rescan": "Rescan",
+      "Scanning": "Scanning…",
+      "ScannedAt": "Last scan: {date}",
+      "Truncated": "The scan stopped at a limit; not all images are listed.",
+      "FolderErrors": "{count} folder(s) could not be read. See the browser console for details.",
+      "NoIndex": "No index yet. Choose “Rescan” in the window menu (⋮) to read the stage folder.",
+      "NoImages": "The stage folder contains no images.",
+      "Variants": "Variants",
+      "VariantCount": "{count} variants",
+      "BaseVariant": "Default",
+      "Rescanned": "Indexed {count} images.",
+      "SelectMode": "Select",
+      "SelectModeEnd": "End selection",
+      "SelectModeHint": "Selection mode: a click selects tiles instead of switching the stage. Without the mode: Cmd/Ctrl+click selects one, Shift+click a range. Alt/Option+click opens the image's tags. Shift+click on a variant button shows it large while Shift is held.",
+      "SelectTile": "Select {name}",
+      "SelectedCount": "{count} selected",
+      "SelectHint": "Click tiles to select them.",
+      "SelectAll": "Select all",
+      "SelectAllHint": "Selects all visible tiles, so a search narrows the selection.",
+      "ClearSelection": "Clear selection",
+      "ReviewNotice": "The scan found things to review: {items}.",
+      "ReviewSuggestions": "tag suggestions ({count})",
+      "ReviewOrphans": "orphaned tags ({count})",
+      "Review": "Review",
+      "CloseNotice": "Close notice",
+      "FilterHint": "Matching tags and variants appear while typing; Enter adds the highlighted one as a filter. #night + Enter sets a tag filter directly, /night + Enter a variant filter.",
+      "NoRoot": "No stage folder is set. Choose one in the Stagecraft settings.",
+      "Info": "Filtering and index",
+      "RescanWhere": "Rescan: window menu ⋮ at the top right",
+      "ToggleOn": "{label}: on. {hint}",
+      "ToggleOff": "{label}: off. {hint}",
+      "InfoSearch": "Search",
+      "InfoIndex": "Index",
+      "NotScanned": "Not scanned yet",
+      "InfoSearchItems": "Typing shows matching tags and variants; Enter adds the highlighted one as a filter.\n#night + Enter sets a tag filter directly.\n/night + Enter sets a variant filter directly.\nThe “Search scopes” button sets where plain text searches."
+    },
+    "CardBrowser": {
+      "Title": "Stagecraft – Cards",
+      "Control": "Card browser",
+      "SearchPlaceholder": "Search… #tag",
+      "FilterHint": "Matching tags appear while typing; Enter adds the highlighted one as a filter. #tag + Enter sets a tag filter directly.",
+      "SelectModeHint": "Selection mode: a click selects cards instead of showing them. Without the mode: Cmd/Ctrl+click selects one, Shift+click a range. Alt/Option+click opens the image's tags. Shift+click on a variant button shows it large while Shift is held.",
+      "Count": "{shown} of {total} cards",
+      "NoRoot": "No card folder is set. Choose one in the Stagecraft settings.",
+      "NoIndex": "No index yet. Choose “Rescan” in the window menu (⋮) to read the card folder.",
+      "NoImages": "The card folder contains no images.",
+      "Rescanned": "Indexed {count} cards.",
+      "Shown": "Cast",
+      "InsertBefore": "Insert the next card here (before {name})",
+      "InsertEnd": "Insert the next card at the end",
+      "Position": "Card position on the stage now shown",
+      "PositionFor": "{position} – for “{stage}”",
+      "PositionNoStage": "No stage from the index is shown.",
+      "HideAll": "Hide all",
+      "EndDialog": "End Dialog",
+      "Speaking": "{name} is speaking",
+      "SetSpeaker": "Set as speaker",
+      "EndSpeaker": "End speaker",
+      "TooMany": "At most {max} cards fit into the cast. Remove one first.",
+      "PositionDefault": "default",
+      "PositionOf": "Card position on “{stage}”",
+      "NoneShown": "The cast is empty. A click on a tile shows a card, dragging it here adds it hidden.",
+      "InfoSearchItems": "Typing shows matching tags; Enter adds the highlighted one as a filter.\n#tag + Enter sets a tag filter directly.\nThe “Search scopes” button sets where plain text searches."
+    },
+    "Cast": {
+      "RemoveAll": "Remove all",
+      "RemoveAllHint": "Empty the cast, hidden cards too. They stay under “Recently shown”.",
+      "HideAllHint": "Hide all cards; they stay in the cast.",
+      "Show": "Show",
+      "Hide": "Hide",
+      "Remove": "Remove from the cast",
+      "AddHidden": "Add hidden to the cast",
+      "ShownHint": "{name} – shown. Click: hide",
+      "HiddenHint": "{name} – hidden. Click: show",
+      "Hidden": "hidden",
+      "Full": "{count} cards did not fit into the cast (at most {max})."
+    },
+    "Draft": {
+      "Plan": "Plan",
+      "PlanHint": "Planning mode: clicks change a draft the players do not see. “Show” shows it in one step, the cards turning over in place; “Discard” ends it.",
+      "Label": "Draft",
+      "Empty": "Click cards to fill the draft. The players see nothing of it.",
+      "Show": "Show",
+      "Discard": "Discard",
+      "NotPlanning": "Planning mode is not active."
+    },
+    "Dialogs": {
+      "RemoveTag": "Remove {tag}",
+      "Label": "Dialogs",
+      "Toggle": "Dialogs ({count})",
+      "NoneMatch": "No dialog matches the filter.",
+      "ShowHint": "Click: show to the players",
+      "LoadHint": "Click: load into the draft",
+      "MenuHint": "Right-click: edit, properties, delete",
+      "StageOf": "Stage: {stage}",
+      "Edit": "Edit",
+      "Properties": "Dialog properties",
+      "PropertiesOf": "Properties of “{name}”",
+      "New": "New dialog",
+      "Delete": "Delete",
+      "DeleteTitle": "Delete dialog?",
+      "DeleteConfirm": "Delete the dialog “{name}”?",
+      "StripLabel": "{label}: {name}",
+      "SaveAs": "Save as dialog",
+      "SaveAsNew": "Save as new dialog",
+      "SaveBack": "Save",
+      "SaveBackHint": "Save the draft into “{name}”",
+      "Saved": "Dialog “{name}” saved.",
+      "Name": "Name",
+      "NamePlaceholder": "e.g. Pilgrims at the well",
+      "Cards": "Cards",
+      "CardsHint": "Change the cards in the draft: “Edit” loads the dialog there, “Save” in the “Draft” strip keeps the changes.",
+      "Speaker": "Speaker",
+      "Missing": "missing",
+      "Stage": "Stage",
+      "StageNone": "None – the running stage stays",
+      "StageCurrent": "Running stage: {stage}",
+      "StageHint": "If the dialog has a stage, showing the dialog switches to it, with its light preset.",
+      "Tags": "Tags",
+      "TagsHint": "Enter or “Add” takes the tag; commas separate several. The card browser filters the dialogs by tags like the cards.",
+      "SaveChanges": "Save changes",
+      "Create": "Save dialog",
+      "Unknown": "There is no dialog “{ref}”.",
+      "NoCardIndex": "This browser has no card index. “Rescan” in the card browser’s window menu (⋮) reads the card folder.",
+      "NoCards": "No card of the dialog “{name}” is in the index any more.",
+      "MissingCards": "“{name}”: these cards are no longer in the index and are left out: {cards}",
+      "MissingStage": "“{name}”: the stage {stage} is not in the index; the running stage stays.",
+      "NameRequired": "The dialog needs a name.",
+      "CardsRequired": "A dialog needs at least one card.",
+      "TooMany": "At most {max} dialogs can be saved."
+    },
+    "Sidebar": {
+      "Collapse": "Collapse sidebar",
+      "CollapseOnStageHint": "Collapse the players' sidebar with every stage switch, so the stage is clear. For you only in the player view.",
+      "CollapseOnCardsHint": "Collapse the players' sidebar before the first card; the cards appear once it is gone. In planning mode before the draft is shown. For you only in the player view."
+    },
+    "CardPosition": {
+      "top": "Top centre",
+      "bottom": "Bottom centre (above the hotbar)",
+      "center": "Centred",
+      "left": "Left, top to bottom",
+      "right": "Right, top to bottom"
+    },
+    "Thumbs": {
+      "Label": "Previews",
+      "Progress": "{done} of {total}",
+      "Created": "Created {count} preview images.",
+      "SomeFailed": "{count} preview images could not be created. See the browser console for details.",
+      "Failed": "Preview images could not be created: {message}",
+      "UploadFailed": "Upload to the thumbnail folder failed."
+    },
+    "ThumbCache": {
+      "Menu": {
+        "Name": "Preview cache",
+        "Label": "Manage preview cache",
+        "Hint": "Status of the preview images, create missing ones, recreate all and list orphaned files."
+      },
+      "Title": "Stagecraft – Preview cache",
+      "Location": "Location",
+      "Present": "Present",
+      "OfTotal": "{count} of {total}",
+      "Missing": "Missing",
+      "Failed": "Could not be created",
+      "Orphaned": "Orphaned",
+      "NoIndex": "No index yet. Choose “Rescan” in the stage browser’s window menu (⋮) first so previews can be matched to images.",
+      "Reading": "Reading the thumbnail folder…",
+      "Unavailable": "Uploading to the thumbnail folder failed, so the tiles show the originals. Check storage and folder in the settings.",
+      "CreateMissing": "Create missing",
+      "Regenerate": "Recreate all",
+      "RegenerateHint": "“Recreate all” starts a new numbered subfolder. Foundry cannot delete files; the previous folder stays and can be deleted by hand afterwards.",
+      "RegenerateTitle": "Recreate all previews?",
+      "RegenerateConfirm": "All {count} preview images will be recreated in the new subfolder {next}. The previous folder {folder} will no longer be used.",
+      "ShowOrphaned": "List orphaned ({count})",
+      "OrphanedHint": "These files belong to no image any more, e.g. because it was renamed or deleted. They can be deleted by hand.",
+      "ShowOldFolders": "Folders no longer used ({count})",
+      "OldFolders": "Folders no longer used",
+      "OldFoldersHint": "Earlier subfolders from “Recreate all”. They can be deleted by hand, including their contents.",
+      "ShowFailed": "Images without preview ({count})",
+      "FailedHint": "No preview could be created for these images; see the browser console for details. Their tiles show the original. “Create missing” tries again.",
+      "Copy": "Copy paths",
+      "Copied": "Copied",
+      "CopyFailed": "Copy failed"
+    },
+    "Tags": {
+      "Edit": "Edit tags",
+      "TitleOne": "Tags: {name}",
+      "TitleMany": "Tags: {count} locations",
+      "NothingSelected": "The selected locations are no longer in the index.",
+      "Variants": "Variants",
+      "Current": "Tags",
+      "None": "No tags.",
+      "WillRemove": "will be removed",
+      "WillAdd": "new",
+      "WillAddAll": "will be set for all {total}",
+      "ApplyToAll": "For all",
+      "Remove": "Remove {tag}",
+      "Undo": "Undo removing {tag}",
+      "Add": "Add tag",
+      "AddButton": "Add",
+      "AddHint": "Enter adds, commas separate several. Prefixes: Session:, Scene:, Plot:, NPC:, Faction:, Location:.",
+      "Save": "Save",
+      "Saved": "Changed the tags of {count} files.",
+      "TitleManyCards": "Tags: {count} cards",
+      "Known": "Known tags"
+    },
+    "Filter": {
+      "Suggestions": "Suggestions",
+      "Scopes": "Search scopes",
+      "ScopesLegend": "Free text searches in",
+      "Scope": {
+        "name": "Name",
+        "variants": "Variants",
+        "tags": "Tags",
+        "folders": "Folders"
+      },
+      "Type": {
+        "tag": "Tag",
+        "variant": "Variant"
+      },
+      "Active": "Active filters",
+      "Pin": "Pin {value} (set on opening)",
+      "Unpin": "Unpin {value}",
+      "Remove": "Remove filter {value}"
+    },
+    "StageScene": {
+      "Menu": {
+        "Name": "Stage scene",
+        "Label": "Choose stage scene",
+        "Hint": "The scene that shows the stages. Stagecraft sets its background image and size on every switch."
+      },
+      "Title": "Stagecraft – Stage scene",
+      "DefaultName": "Stagecraft – Stage",
+      "Hint": "On every switch Stagecraft sets the background image, width and height of this scene and removes its padding. Everything else in the scene stays as it is.",
+      "Current": "Current stage scene:",
+      "Active": "active",
+      "Inactive": "not active",
+      "None": "No stage scene chosen yet. Choose a scene or create a new one.",
+      "Label": "Stage scene",
+      "NoneOption": "— none —",
+      "Create": "Create new stage scene",
+      "Save": "Save",
+      "Saved": "Stage scene saved.",
+      "Created": "Created stage scene “{name}”."
+    },
+    "ViewLock": {
+      "PlayerView": "Player view: see the stage scene fitted and locked like the players"
+    },
+    "LockView": {
+      "Heading": "Lock View",
+      "Active": "Lock View is active. Stagecraft locks the view on the stage scene itself; deactivating Lock View is recommended.",
+      "ConflictsIntro": "These Lock View settings on the stage scene conflict with Stagecraft:",
+      "NoConflicts": "Lock View has no view settings on the stage scene.",
+      "Conflict": {
+        "pan": "Panning locked",
+        "zoom": "Zoom locked",
+        "boundingBox": "Bounding box",
+        "autoscale": "Autoscale",
+        "forceInitialView": "Forced initial view"
+      },
+      "Reset": "Reset on the stage scene",
+      "ResetTitle": "Reset Lock View settings",
+      "ResetConfirm": "Remove Lock View's locks, autoscale and forced initial view from the scene “{name}”? Other scenes stay as they are.",
+      "ResetDone": "Lock View settings of the stage scene removed.",
+      "Notice": "Lock View locks the stage scene and can conflict with Stagecraft's view lock.",
+      "Check": "Check"
+    },
+    "Keybindings": {
+      "EndDialog": {
+        "Name": "End Dialog",
+        "Hint": "Empty the cast: all cards go, hidden ones too."
+      },
+      "EndSpeaker": {
+        "Name": "End speaker",
+        "Hint": "The speaking card no longer speaks; the cards stay."
+      },
+      "ShowDraft": {
+        "Name": "Show draft",
+        "Hint": "In planning mode: show the draft to the players; the cards turn over in place."
+      }
+    },
+    "CardsOnStageSwitch": {
+      "Title": "End Dialog?",
+      "Text": "{count} card(s) are shown. End the dialog with the switch?",
+      "End": "End Dialog and switch",
+      "Keep": "Keep cards and switch"
+    },
+    "Lights": {
+      "Save": "Save preset",
+      "SaveFor": "Save the lights and walls on the stage as the preset of “{file}”. Without any, its preset is removed.",
+      "Unsaved": "Not saved: the lights and walls on the stage differ from the preset of “{file}”.",
+      "NoStage": "No stage from the index is shown, so its lights and walls cannot be saved.",
+      "Saved": "Saved {lights} light(s) and {walls} wall(s) as the preset of “{file}”.",
+      "Removed": "“{file}” has no lights or walls now; its preset is removed.",
+      "Nothing": "“{file}” has no lights, walls or preset; nothing to save.",
+      "TooMany": "A preset holds at most {lights} lights and {walls} walls.",
+      "Preset": "Light preset",
+      "PresetVariants": "Light preset: {variants}",
+      "WarnTitle": "Preset not saved",
+      "WarnChanged": "The lights and walls on “{file}” differ from its saved preset. Switching replaces them.",
+      "WarnNew": "The lights and walls on “{file}” are not saved yet. Switching removes them.",
+      "WarnUnindexed": "The lights and walls on the stage cannot be saved, because its image is not in the index. Switching removes them.",
+      "SaveAndSwitch": "Save and switch",
+      "DiscardAndSwitch": "Discard and switch",
+      "Cancel": "Cancel"
+    },
+    "Stage": {
+      "NoScene": "No stage scene is set, so stages cannot be shown yet.",
+      "Setup": "Set up",
+      "Inactive": "The stage scene “{name}” is not active. A click changes its image; players see it once it is active.",
+      "Activate": "Activate",
+      "DefaultNavName": "Stage",
+      "OnStage": "On stage now",
+      "RenameLabel": "{name} – stage name and bar colour",
+      "NameTooltip": "Stage name players see. File: {file}. Click to change name or bar colour.",
+      "NameTooltipUnset": "Click to set a stage name players see (otherwise “Stage”) or the bar colour.",
+      "RenameTitle": "Stage settings",
+      "CardPositionLabel": "Card position",
+      "CardPositionHint": "Where the cards stand for the players while this location is on stage, for all its variants.",
+      "CardPositionDefault": "Default ({position})",
+      "NameLabel": "Name in the scene navigation",
+      "NameHint": "Players see this name instead of “Stage” while this location is shown. Leave empty for “Stage”. File: {file}",
+      "NameSave": "Save",
+      "ChangeName": "Change name",
+      "Rename": "Rename",
+      "RenameManyTitle": "Stage name for {count} locations",
+      "NameManyHint": "Players see this name instead of “Stage” while one of these {count} locations is shown. Leave empty for “Stage”.",
+      "ColorLegend": "Bar colour per variant",
+      "ColorHint": "Fills the bars when the whole image is shown (setting “Show the whole image”). Empty: the darkened average colour of the image edges.",
+      "ColorAuto": "automatic",
+      "Errors": {
+        "NoScene": "No stage scene is set. Choose or create one in the Stagecraft settings.",
+        "NoLevel": "The stage scene has no level to show the image on.",
+        "NotIndexed": "This image is not in the stage index. Please rescan.",
+        "Unreadable": "The image could not be read: {src}"
+      }
+    },
+    "TagReview": {
+      "Menu": {
+        "Name": "Review tags",
+        "Label": "Review tags",
+        "Hint": "Tag suggestions from file and folder names, and tags whose file was renamed, moved or deleted."
+      },
+      "Title": "Stagecraft – Review tags",
+      "NoIndex": "No index yet. Choose “Rescan” in the stage browser’s window menu (⋮) first.",
+      "Suggestions": "Suggestions ({count})",
+      "SuggestionsHint": "From the first name part before “ - ” (as Location:…) and from folder names. Only checked tags are added; open a file list to leave out single files.",
+      "Files": "Files ({count})",
+      "Dismiss": "Dismiss",
+      "DismissTag": "Dismiss {tag}",
+      "PickAll": "Check all",
+      "PickNone": "Uncheck all",
+      "Chosen": "{tags} tags for {files} files checked",
+      "ApplySuggestions": "Add checked",
+      "Applied": "Tags added to {count} files.",
+      "NoSuggestions": "No open suggestions.",
+      "DismissedCount": "Dismissed suggestions: {count}",
+      "ClearDismissed": "Suggest again",
+      "Orphans": "Orphaned tags ({count})",
+      "OrphansHint": "Tags at paths the last scan did not find, for example after renaming or moving a file.",
+      "Incomplete": "The last scan missed folders or stopped at a limit. Orphaned tags are only shown after a complete scan.",
+      "NoOrphans": "No orphaned tags.",
+      "Moves": "New place found ({count})",
+      "MoreMoves": "… and {count} more; they are moved as well.",
+      "ApplyMoves": "Move checked",
+      "Moved": "Moved the tags of {count} files.",
+      "Lost": "Without match ({count})",
+      "MoreLost": "… and {count} more",
+      "Remove": "Remove",
+      "RemoveOrphan": "Remove tags of {file}",
+      "RemoveAll": "Remove all ({count})",
+      "RemoveAllTitle": "Remove orphaned tags",
+      "RemoveAllConfirm": "Remove the tags of all {count} files without match? This cannot be undone; an export beforehand keeps a copy.",
+      "Removed": "Removed the tags of {count} files.",
+      "Reason": {
+        "NotFound": "No file with this name in the index",
+        "Ambiguous": "File name occurs more than once"
+      },
+      "IncompleteCards": "The card index has not been read yet, so card tags would look orphaned. Open the card browser and choose “Rescan” in its window menu (⋮); orphaned tags appear afterwards."
+    },
+    "TagTransfer": {
+      "Menu": {
+        "Name": "Export / import tags",
+        "Label": "Export / import tags",
+        "Hint": "Save all tags as a JSON file, edit them externally and read them back in, also for bulk changes or the Eagle import."
+      },
+      "Title": "Stagecraft – Export / import tags",
+      "Export": "Export",
+      "ExportHint": "{count} files have tags. The export contains path and tags of each file.",
+      "ExportButton": "Download as JSON",
+      "Import": "Import",
+      "NoIndex": "No index yet. Choose “Rescan” in the stage browser’s window menu (⋮) first; the import matches entries to the scanned files.",
+      "ImportHint": "Entries are matched by path, otherwise by unique file name. A preview shows all changes; only “Apply” saves.",
+      "Mode": "Existing tags",
+      "ModeReplace": "Replace: the file then has exactly the imported tags",
+      "ModeMerge": "Merge: imported tags are added, nothing is removed",
+      "File": "File (JSON)",
+      "Preview": "Preview for {file}",
+      "Entries": "{count} entries in the file",
+      "Changed": "{count} files change",
+      "Unchanged": "{count} files stay the same",
+      "Unmatched": "{count} entries without match",
+      "ChangesList": "Changes ({count})",
+      "UnmatchedList": "Without match ({count})",
+      "ErrorsList": "Notes on the file ({count})",
+      "More": "… and {count} more",
+      "Discard": "Discard",
+      "Apply": "Apply ({count})",
+      "Applied": "Applied the tags of {count} files.",
+      "Reason": {
+        "NotFound": "No file with this path or name in the index",
+        "Ambiguous": "File name occurs more than once; please give the path"
+      },
+      "Error": {
+        "TooLarge": "The file is larger than 5 MB.",
+        "NotJson": "The file is not valid JSON.",
+        "NotAnObject": "The file does not have the expected format.",
+        "WrongFormat": "This is not a Stagecraft tag file (format missing or wrong).",
+        "UnsupportedVersion": "This version of the tag format is not supported.",
+        "TagsNotAnObject": "The “tags” entry is missing or not an object.",
+        "TooManyEntries": "The file has too many entries.",
+        "InvalidKey": "Invalid or overlong path; entry skipped.",
+        "TagsNotAnArray": "Tags are not a list; entry skipped.",
+        "TooManyTags": "Too many tags; entry skipped.",
+        "InvalidTagsDropped": "Invalid tags were left out."
+      }
+    },
+    "History": {
+      "Label": "Recently shown",
+      "None": "Nothing has left the stage yet.",
+      "RestoreHint": "Click: show again",
+      "LoadHint": "Click: load into the draft",
+      "Unknown": "This entry no longer exists."
+    }
+  }
+}

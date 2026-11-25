@@ -1,0 +1,33 @@
+{{!-- Saved dialogs, collapsed on every opening of the browser: the list is only built while it is open (no images
+      for a closed list). A click shows a dialog (in planning mode: loads it into the draft); "Edit", "Properties"
+      and "Delete" in the context menu, so a click never lands on anything but "show". Filtered like the tiles
+      (CardBrowser#_onFilterApplied). --}}
+<section class="card-dialogs{{#unless dialogCount}} empty{{/unless}}{{#if dialogsOpen}} open{{/if}}"
+         aria-labelledby="{{idPrefix}}-dialogs-toggle">
+  {{#if dialogCount}}
+  <button type="button" class="card-dialogs-toggle" id="{{idPrefix}}-dialogs-toggle" data-action="toggleDialogs"
+          aria-expanded="{{#if dialogsOpen}}true{{else}}false{{/if}}">
+    <i class="fa-solid fa-chevron-down" aria-hidden="true"></i> {{dialogsLabel}}
+  </button>
+  {{#if dialogsOpen}}
+  <ul class="card-dialogs-list">
+    {{#each dialogs}}
+    <li class="card-dialog{{#if current}} current{{/if}}{{#if editing}} editing{{/if}}" data-id="{{id}}">
+      <button type="button" class="card-dialog-show" data-action="showDialog" data-id="{{id}}"
+              data-tooltip-text="{{hint}}" {{#if current}}aria-current="true"{{/if}}>
+        <span class="card-dialog-thumbs" aria-hidden="true">
+          {{#each thumbs}}
+          {{#if src}}<img src="{{src}}" alt="" width="20" height="30"{{#if hidden}} class="covered"{{/if}}>{{else}}<span class="card-dialog-dummy"></span>{{/if}}
+          {{/each}}
+          {{#if more}}<span class="card-dialog-more">+{{more}}</span>{{/if}}
+        </span>
+        <span class="card-dialog-name">{{name}}</span>
+        {{#if hasStage}}<i class="fa-solid fa-panorama" aria-hidden="true"></i>{{/if}}
+      </button>
+    </li>
+    {{/each}}
+  </ul>
+  <p class="card-dialogs-none" hidden>{{localize "STAGECRAFT.Dialogs.NoneMatch"}}</p>
+  {{/if}}
+  {{/if}}
+</section>

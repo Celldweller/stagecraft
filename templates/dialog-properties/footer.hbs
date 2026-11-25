@@ -1,0 +1,10 @@
+<div class="dialog-properties-actions">
+  {{#unless isNew}}
+  <button type="button" data-action="deleteDialog">
+    <i class="fa-solid fa-trash" aria-hidden="true"></i> {{localize "STAGECRAFT.Dialogs.Delete"}}
+  </button>
+  {{/unless}}
+  <button type="submit">
+    <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> {{submitLabel}}
+  </button>
+</div>

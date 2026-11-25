@@ -1,0 +1,21 @@
+<div class="stage-filter-chips" {{#unless chips.length}}hidden{{/unless}}>
+  <ul aria-label="{{localize "STAGECRAFT.Filter.Active"}}">
+    {{#each chips}}
+    <li class="stage-filter-chip{{#if pinned}} pinned{{/if}}" data-type="{{type}}" data-kind="{{kind}}">
+      <i class="fa-solid {{icon}}" aria-hidden="true"></i>
+      <span class="stagecraft-visually-hidden">{{typeLabel}}:</span>
+      <span class="stage-filter-chip-text">{{value}}</span>
+      {{!-- Icons as <i> inside the button: Foundry loads Font Awesome in a lower CSS layer than its button
+            font, so an fa-class on the <button> itself would render no glyph. --}}
+      <button type="button" class="stage-filter-chip-button" data-action="pinChip" data-index="{{@index}}"
+              aria-pressed="{{#if pinned}}true{{else}}false{{/if}}" aria-label="{{pinLabel}}" data-tooltip-text="{{pinLabel}}">
+        <i class="{{#if pinned}}fa-solid{{else}}fa-regular{{/if}} fa-thumbtack" aria-hidden="true"></i>
+      </button>
+      <button type="button" class="stage-filter-chip-button" data-action="removeChip" data-index="{{@index}}"
+              aria-label="{{removeLabel}}" data-tooltip-text="{{removeLabel}}">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      </button>
+    </li>
+    {{/each}}
+  </ul>
+</div>

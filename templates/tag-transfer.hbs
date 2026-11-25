@@ -1,0 +1,99 @@
+<div class="tag-transfer">
+  <section class="tag-transfer-section" aria-labelledby="stagecraft-tag-export">
+    <h3 id="stagecraft-tag-export">{{localize "STAGECRAFT.TagTransfer.Export"}}</h3>
+    <p>{{localize "STAGECRAFT.TagTransfer.ExportHint" count=taggedFiles}}</p>
+    <div class="tag-transfer-actions">
+      <button type="button" data-action="exportTags">
+        <i class="fa-solid fa-file-export" aria-hidden="true"></i> {{localize "STAGECRAFT.TagTransfer.ExportButton"}}
+      </button>
+    </div>
+  </section>
+
+  <section class="tag-transfer-section" aria-labelledby="stagecraft-tag-import">
+    <h3 id="stagecraft-tag-import">{{localize "STAGECRAFT.TagTransfer.Import"}}</h3>
+    {{#unless hasIndex}}
+    <p class="tag-transfer-note">{{localize "STAGECRAFT.TagTransfer.NoIndex"}}</p>
+    {{else}}
+    <p>{{localize "STAGECRAFT.TagTransfer.ImportHint"}}</p>
+    <fieldset class="tag-transfer-mode">
+      <legend>{{localize "STAGECRAFT.TagTransfer.Mode"}}</legend>
+      <label>
+        <input type="radio" name="importMode" value="replace" {{#if (eq mode "replace")}}checked{{/if}}>
+        {{localize "STAGECRAFT.TagTransfer.ModeReplace"}}
+      </label>
+      <label>
+        <input type="radio" name="importMode" value="merge" {{#if (eq mode "merge")}}checked{{/if}}>
+        {{localize "STAGECRAFT.TagTransfer.ModeMerge"}}
+      </label>
+    </fieldset>
+    <div class="form-group stacked">
+      <label for="stagecraft-tag-import-file">{{localize "STAGECRAFT.TagTransfer.File"}}</label>
+      <input type="file" id="stagecraft-tag-import-file" name="importFile" accept=".json,application/json">
+    </div>
+    {{#if fileError}}
+    <p class="tag-transfer-warning" role="alert">{{fileError}}</p>
+    {{/if}}
+
+    {{#if preview}}
+    <div class="tag-transfer-preview" role="status">
+      <h4>{{localize "STAGECRAFT.TagTransfer.Preview" file=preview.fileName}}</h4>
+      <ul class="tag-transfer-summary">
+        <li>{{localize "STAGECRAFT.TagTransfer.Entries" count=preview.entryCount}}</li>
+        <li>{{localize "STAGECRAFT.TagTransfer.Changed" count=preview.changedCount}}</li>
+        <li>{{localize "STAGECRAFT.TagTransfer.Unchanged" count=preview.unchanged}}</li>
+        <li>{{localize "STAGECRAFT.TagTransfer.Unmatched" count=preview.unmatchedCount}}</li>
+      </ul>
+
+      {{#if preview.changes.shown.length}}
+      <details class="tag-transfer-list" open>
+        <summary>{{localize "STAGECRAFT.TagTransfer.ChangesList" count=preview.changedCount}}</summary>
+        <ul>
+          {{#each preview.changes.shown}}
+          <li>
+            <span class="tag-transfer-file" data-tooltip-text="{{path}}">{{file}}</span>
+            {{#each removed}}<span class="tag-transfer-tag removed">− {{this}}</span>{{/each}}
+            {{#each added}}<span class="tag-transfer-tag added">+ {{this}}</span>{{/each}}
+          </li>
+          {{/each}}
+        </ul>
+        {{#if preview.changes.more}}<p class="tag-transfer-note">{{localize "STAGECRAFT.TagTransfer.More" count=preview.changes.more}}</p>{{/if}}
+      </details>
+      {{/if}}
+
+      {{#if preview.unmatched.shown.length}}
+      <details class="tag-transfer-list">
+        <summary>{{localize "STAGECRAFT.TagTransfer.UnmatchedList" count=preview.unmatchedCount}}</summary>
+        <ul>
+          {{#each preview.unmatched.shown}}
+          <li><span class="tag-transfer-file">{{key}}</span> <span class="tag-transfer-note">{{reason}}</span></li>
+          {{/each}}
+        </ul>
+        {{#if preview.unmatched.more}}<p class="tag-transfer-note">{{localize "STAGECRAFT.TagTransfer.More" count=preview.unmatched.more}}</p>{{/if}}
+      </details>
+      {{/if}}
+
+      {{#if preview.errors.shown.length}}
+      <details class="tag-transfer-list">
+        <summary>{{localize "STAGECRAFT.TagTransfer.ErrorsList" count=preview.errorCount}}</summary>
+        <ul>
+          {{#each preview.errors.shown}}
+          <li><span class="tag-transfer-file">{{key}}</span> <span class="tag-transfer-note">{{error}}</span></li>
+          {{/each}}
+        </ul>
+        {{#if preview.errors.more}}<p class="tag-transfer-note">{{localize "STAGECRAFT.TagTransfer.More" count=preview.errors.more}}</p>{{/if}}
+      </details>
+      {{/if}}
+
+      <div class="tag-transfer-actions">
+        <button type="button" data-action="discardImport">
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i> {{localize "STAGECRAFT.TagTransfer.Discard"}}
+        </button>
+        <button type="button" data-action="applyImport" {{#unless preview.canApply}}disabled{{/unless}}>
+          <i class="fa-solid fa-check" aria-hidden="true"></i> {{localize "STAGECRAFT.TagTransfer.Apply" count=preview.changedCount}}
+        </button>
+      </div>
+    </div>
+    {{/if}}
+    {{/unless}}
+  </section>
+</div>

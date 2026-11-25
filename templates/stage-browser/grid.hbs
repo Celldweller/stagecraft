@@ -1,0 +1,82 @@
+<div class="stage-browser-body">
+  {{#unless hasRoot}}
+  <p class="stage-browser-empty">{{noRoot}}</p>
+  {{else unless hasIndex}}
+  <p class="stage-browser-empty">{{noIndex}}</p>
+  {{else unless total}}
+  <p class="stage-browser-empty">{{noImages}}</p>
+  {{else}}
+  <ul class="stage-browser-grid">
+    {{#each tiles}}
+    <li class="stage-tile{{#if deferred}} deferred{{/if}}{{#if selected}} selected{{/if}}" data-key="{{key}}">
+      {{!-- Foundry sets `button > * { pointer-events: none }`; elements with tooltips inside the button
+            re-enable pointer events in styles/stagecraft.css. --}}
+      <button type="button" class="stage-tile-preview" data-action="selectStage" data-path="{{original}}"
+              aria-label="{{name}}">
+        <span class="stage-tile-media" data-original="{{original}}">
+          <i class="stage-tile-dummy fa-regular fa-image" aria-hidden="true"></i>
+          <span class="stage-tile-marks">
+            {{!-- Shown while a variant has a light preset (class "has-lights"; tooltip set by #markPresets). --}}
+            <span class="stage-tile-lights">
+              <i class="fa-solid fa-lightbulb" aria-hidden="true"></i>
+            </span>
+            {{!-- Shown while this location is on the stage (class "current" on the tile). --}}
+            <span class="stage-tile-live" data-tooltip="STAGECRAFT.Stage.OnStage">
+              <i class="fa-solid fa-tower-broadcast" aria-hidden="true"></i>
+            </span>
+          </span>
+          {{#if src}}
+          <img src="{{src}}" alt="" width="320" height="180" loading="lazy" decoding="async">
+          {{/if}}
+          {{#if hasOverlay}}
+          <span class="stage-tile-footer" aria-hidden="true">
+            {{!-- One flowing list of all tags in display order: the labels that fit into one line, "+n", then the
+                  remaining tags (shown on hover). It wraps upwards, so the first line keeps its place. --}}
+            <span class="stage-tile-tags">
+              {{#each tags}}
+              <span class="stage-tile-tag" data-kind="{{kind}}" data-tooltip-text="{{tag}}">{{text}}</span>
+              {{/each}}
+              {{#if tags.length}}
+              {{!-- Shown with the count once the labels are fitted into one line (scripts/apps/tile-tag-fit.mjs). --}}
+              <span class="stage-tile-chip stage-tile-more-chip" hidden>
+                <i class="fa-solid fa-tags"></i> <span class="stage-tile-more-count"></span>
+              </span>
+              {{/if}}
+            </span>
+            {{#if hasVariants}}
+            <span class="stage-tile-chip stage-tile-badge" data-tooltip-text="{{variantCount}}">
+              <i class="fa-solid fa-layer-group"></i> {{variants.length}}
+            </span>
+            {{/if}}
+          </span>
+          {{/if}}
+        </span>
+      </button>
+      {{!-- Top overlay outside the button: checkbox and full name in the first row, variant buttons below.
+            The name is a button that sets the stage name players see; its text, tooltip and label are filled
+            in from the stage names (see #applyStageNames). --}}
+      <div class="stage-tile-top">
+        <input type="checkbox" class="stage-tile-check" data-action="toggleTile" aria-label="{{selectLabel}}"
+               {{#if selected}}checked{{/if}}>
+        <button type="button" class="stage-tile-name" data-action="renameStage" data-file-name="{{name}}">
+          <i class="fa-solid fa-users stage-tile-name-icon" aria-hidden="true"></i>
+          <span class="stage-tile-name-text">{{name}}</span>
+        </button>
+        {{#if hasVariants}}
+        <ul class="stage-tile-variants" aria-label="{{localize "STAGECRAFT.Browser.Variants"}}">
+          {{#each variants}}
+          <li>
+            <button type="button" data-action="selectStage" data-path="{{path}}"
+                    {{#if isBase}}class="base"{{/if}}>
+              <i class="fa-solid fa-lightbulb stage-tile-variant-lights" aria-hidden="true"></i>{{label}}
+            </button>
+          </li>
+          {{/each}}
+        </ul>
+        {{/if}}
+      </div>
+    </li>
+    {{/each}}
+  </ul>
+  {{/unless}}
+</div>
