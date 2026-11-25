@@ -1,8 +1,9 @@
 /**
  * The stage scene: which scene it is, what it shows, and switching it to another image.
  *
- * This is the only place that reads or writes the scene background (v14 keeps it on the scene's level,
- * see plan section 8). Everything else asks `getStageSrc` or calls `switchStage`.
+ * This is the only place that reads or writes the scene background (branch v13: on the scene itself, `background`
+ * and `backgroundColor`; v14 keeps it on the scene's level, see plan section 8). Everything else asks `getStageSrc`
+ * or calls `switchStage`.
  *
  * Switching: the GM sends `preload` to the players viewing the stage scene, waits until all answered `preloaded`
  * (at most PRELOAD_TIMEOUT_MS, so a player with a slow connection does not hold up the others), then writes image
@@ -72,22 +73,13 @@ export function getSwitchingPath() {
 }
 
 /**
- * The level that shows the stage image.
- * @param {Scene} scene
- * @returns {foundry.documents.Level|null}
- */
-function stageLevel(scene) {
-  return scene.initialLevel ?? null;
-}
-
-/**
  * Image the stage scene currently shows.
  * @param {Scene|null} [scene]
  * @returns {string|null}
  */
 export function getStageSrc(scene=getStageScene()) {
   if ( !scene ) return null;
-  return stageLevel(scene)?.background?.src || null;
+  return scene.background?.src || null;
 }
 
 /**
@@ -96,9 +88,8 @@ export function getStageSrc(scene=getStageScene()) {
  * @returns {{src: string|null, color: string|null}}
  */
 export function getStageBackground(scene=getStageScene()) {
-  const background = scene ? stageLevel(scene)?.background : null;
-  const color = background?.color;
-  return {src: background?.src || null, color: (color === null) || (color === undefined)
+  const color = scene?.backgroundColor;
+  return {src: scene?.background?.src || null, color: (color === null) || (color === undefined)
     ? null : foundry.utils.Color.from(color).css};
 }
 
@@ -223,11 +214,9 @@ export async function setStageColors(changes) {
   const scene = getStageScene();
   const entry = currentEntry();
   if ( !scene || !entry || !(variantKey(entry.locationKey, entry.variant) in changes) ) return;
-  const level = stageLevel(scene);
-  if ( !level ) return;
   const override = getStageColors()[variantKey(entry.locationKey, entry.variant)];
   const color = override ?? colorFor(entry, (await readImage(entry.path)).color);
-  await scene.update({levels: [{_id: level.id, background: {color}}]});
+  await scene.update({backgroundColor: color});
 }
 
 /** Setting onChange: drop the cache. */
@@ -378,8 +367,6 @@ export async function switchStage(path, {endDialog}={}) {
   if ( !entry ) throw new Error(game.i18n.localize("STAGECRAFT.Stage.Errors.NotIndexed"));
   const scene = getStageScene();
   if ( !scene ) throw new Error(game.i18n.localize("STAGECRAFT.Stage.Errors.NoScene"));
-  const level = stageLevel(scene);
-  if ( !level ) throw new Error(game.i18n.localize("STAGECRAFT.Stage.Errors.NoLevel"));
   if ( getStageSrc(scene) === path ) return false;
 
   const request = ++latestSwitch;
@@ -402,12 +389,12 @@ export async function switchStage(path, {endDialog}={}) {
     const navName = navNameFor(entry.locationKey);
     const color = colorFor(entry, image.value.color);
     // Lights and walls of the stage scene are replaced as a whole: the new variant's preset, or none.
-    const {lights, walls} = presetFor(entry, scene, image.value.size, level.id);
-    const {ForcedReplacement} = foundry.data.operators;
+    const {lights, walls} = presetFor(entry, scene, image.value.size);
+    // "==" replaces the whole collection (v13; v14 uses foundry.data.operators.ForcedReplacement).
     await scene.update({
-      ...stageUpdateData({levelId: level.id, src: path, ...image.value.size, navName, color}),
-      lights: ForcedReplacement.create(lights),
-      walls: ForcedReplacement.create(walls)
+      ...stageUpdateData({src: path, ...image.value.size, navName, color}),
+      "==lights": lights,
+      "==walls": walls
     });
     console.log(`${MODULE_ID} | Stage scene updated after ${Math.round(performance.now() - started)} ms`);
     endDialog ??= getSetting("cardsOnStageSwitch") === "end";
@@ -448,9 +435,6 @@ export function registerStageScene() {
   const relevant = scene => scene?.id === String(getSetting("stageScene") ?? "");
   Hooks.on("updateScene", scene => {
     if ( relevant(scene) ) Hooks.callAll(STAGE_SCENE_HOOK);
-  });
-  Hooks.on("updateLevel", level => {
-    if ( relevant(level.parent) ) Hooks.callAll(STAGE_SCENE_HOOK);
   });
   Hooks.on("deleteScene", scene => {
     if ( relevant(scene) ) Hooks.callAll(STAGE_SCENE_HOOK);

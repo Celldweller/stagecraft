@@ -65,14 +65,14 @@ export function imageSize(width, height) {
 
 /**
  * The scene update for a new stage image: the scene takes the image's size without padding and the stage name
- * as navigation name; the level shows the image as background, with the bar colour around it.
- * Other level data stays untouched (embedded updates are merged by `_id`).
- * @param {{levelId: string, src: string, width: number, height: number, navName: string, color: string}} stage
- * @returns {{width: number, height: number, padding: number, navName: string,
- *   levels: {_id: string, background: {src: string, color: string}}[]}}
+ * as navigation name, and shows the image as background with the bar colour around it (branch v13: both on the
+ * scene itself; other fields of the background texture stay untouched, the update is merged).
+ * @param {{src: string, width: number, height: number, navName: string, color: string}} stage
+ * @returns {{width: number, height: number, padding: number, navName: string, background: {src: string},
+ *   backgroundColor: string}}
  */
-export function stageUpdateData({levelId, src, width, height, navName, color}) {
-  return {width, height, padding: 0, navName, levels: [{_id: levelId, background: {src, color}}]};
+export function stageUpdateData({src, width, height, navName, color}) {
+  return {width, height, padding: 0, navName, background: {src}, backgroundColor: color};
 }
 
 /** Longest stage name; it becomes the scene's navigation name. */

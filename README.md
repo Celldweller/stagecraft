@@ -1,4 +1,6 @@
-# Stagecraft
+# Stagecraft (Foundry VTT v13)
+
+> This branch is the version for Foundry VTT v13. It receives bug fixes only; new features are developed for v14 on `main`.
 
 A Foundry VTT module for scenes told with pictures: **stages** (mood images as the background of one stage scene) and **cards** (NPC portraits shown to the players as a layer above it).
 
@@ -20,16 +22,12 @@ A Foundry VTT module for scenes told with pictures: **stages** (mood images as t
 
 ## Requirements
 
-- Foundry VTT v14 (14.370 or later).
+- Foundry VTT v13 (13.351 or a later v13 build).
 - No dependency on a game system; tested with D&D 5e.
 
 ## Installation
 
-In Foundry, go to *Add-on Modules → Install Module* and paste this manifest URL:
-
-```
-https://github.com/Celldweller/stagecraft/releases/latest/download/module.json
-```
+In Foundry, go to *Add-on Modules → Install Module* and paste the manifest URL of the latest v13 release, listed in its release notes on the [Releases](https://github.com/Celldweller/stagecraft/releases) page. That URL stays on the v13 version, so Foundry does not offer the v14 version as an update.
 
 ## Getting started
 

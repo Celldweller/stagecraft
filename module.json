@@ -4,8 +4,9 @@
   "description": "Mood images as backgrounds of a single stage scene, and NPC cards as a scene-independent HTML layer.",
   "version": "0.1.0",
   "compatibility": {
-    "minimum": "14.370",
-    "verified": "14.370"
+    "minimum": "13.351",
+    "verified": "13.351",
+    "maximum": "13"
   },
   "authors": [
     {

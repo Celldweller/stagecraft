@@ -21,6 +21,7 @@ import {
   chipId, collectFilterValues, exactFilter, matchesFilter, normalizeChips, normalizeScopes, parseFilterInput,
   queryTerms, shownVariant, suggestFilters
 } from "../lib/filter.mjs";
+import { toV13ContextEntries } from "../lib/context-menu.mjs";
 import { splitTag, tagKind } from "../lib/tags.mjs";
 import { TAGS_HOOK } from "../tag-store.mjs";
 import { TagEditor } from "./tag-editor.mjs";
@@ -291,6 +292,15 @@ export class MediaBrowser extends HandlebarsApplicationMixin(ApplicationV2) {
    */
   _onIndexUpdated(index) {
     this.render();
+  }
+
+  /**
+   * The entries are written in the v14 form; v13's ContextMenu gets them converted (lib/context-menu.mjs). Entries
+   * other modules add through the hooks see the v13 form.
+   * @inheritDoc
+   */
+  _createContextMenu(handler, selector, options) {
+    return super._createContextMenu(() => toV13ContextEntries(handler()), selector, options);
   }
 
   /** @inheritDoc */

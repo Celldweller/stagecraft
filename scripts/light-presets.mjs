@@ -87,21 +87,20 @@ function sceneItems(scene) {
 }
 
 /**
- * The preset of an entry as data for the scene, placed on its level. Items Foundry no longer accepts (e.g. after
+ * The preset of an entry as data for the scene (branch v13: scenes have no levels). Items Foundry no longer accepts (e.g. after
  * a change of its data model) are left out, so the switch still works.
  * @param {{locationKey: string, variant: string|null}|null} entry
  * @param {Scene} scene
  * @param {{width: number, height: number}} size  Size of the entry's image.
- * @param {string} levelId
  * @returns {{lights: object[], walls: object[]}}
  */
-export function presetFor(entry, scene, size, levelId) {
+export function presetFor(entry, scene, size) {
   const preset = entry ? getLightPresets()[presetKey(entry)] : null;
   const frame = frameOf(scene, size);
   const result = {};
   for ( const [kind, {documentName, fromPreset}] of Object.entries(KINDS) ) {
     const cls = CONFIG[documentName].documentClass;
-    const items = (preset?.[kind] ?? []).map(item => ({...fromPreset(item, frame), levels: [levelId]}));
+    const items = (preset?.[kind] ?? []).map(item => fromPreset(item, frame));
     result[kind] = items.filter(data => {
       try {
         new cls(data, {strict: true});

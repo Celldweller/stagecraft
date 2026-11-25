@@ -426,7 +426,6 @@
       "ColorAuto": "automatic",
       "Errors": {
         "NoScene": "No stage scene is set. Choose or create one in the Stagecraft settings.",
-        "NoLevel": "The stage scene has no level to show the image on.",
         "NotIndexed": "This image is not in the stage index. Please rescan.",
         "Unreadable": "The image could not be read: {src}"
       }

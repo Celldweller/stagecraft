@@ -426,7 +426,6 @@
       "ColorAuto": "automatisch",
       "Errors": {
         "NoScene": "Es ist keine Stage-Szene eingerichtet. Wähle oder erstelle sie in den Stagecraft-Einstellungen.",
-        "NoLevel": "Die Stage-Szene hat keine Ebene (Level), auf der das Bild erscheinen kann.",
         "NotIndexed": "Dieses Bild ist nicht im Stage-Index. Bitte neu einlesen.",
         "Unreadable": "Das Bild konnte nicht gelesen werden: {src}"
       }

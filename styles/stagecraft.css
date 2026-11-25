@@ -4,6 +4,17 @@
 
 /* ---------- Shared ---------- */
 
+/* Branch v13: Foundry v13 has no spacer tokens and no --cursor-pointer (v14 defines them in :root). Named here
+   with v14's values, so the rules below stay as on main. */
+:root {
+  --spacer-2: 0.125rem;
+  --spacer-4: 0.25rem;
+  --spacer-8: 0.5rem;
+  --spacer-12: 0.75rem;
+  --spacer-16: 1rem;
+  --cursor-pointer: pointer;
+}
+
 /* Prefix colours of Faction and Scene tags. Foundry has only four status colours (--color-level-*), all taken by
    the other prefixes. As markers they keep at least 3:1 against the dark tile scrim and the light and dark window
    backgrounds of both themes (Faction 4.8:1 on --color-cool-5, 3.3:1 on --color-light-2; Scene, a blue green
